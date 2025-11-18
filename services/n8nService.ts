@@ -25,7 +25,8 @@ export const sendToN8nWorkflow = async (webhookUrl: string, payload: object): Pr
     } catch (error) {
         console.error("Error sending request to n8n webhook:", error);
         if (error instanceof TypeError && error.message === 'Failed to fetch') {
-             throw new Error("The request was blocked by the browser's CORS policy. Please ensure your n8n instance is configured to allow requests from this origin. See the note on the page for instructions.");
+             // This specific error message is crucial for the UI to detect a CORS issue.
+             throw new Error("CORS Error: The request was blocked by the browser's CORS policy. This is a security feature, not a bug.");
         }
         if (error instanceof Error) {
             throw new Error(`Network or execution error: ${error.message}`);

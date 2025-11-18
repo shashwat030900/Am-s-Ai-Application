@@ -1,11 +1,18 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable is not set");
-}
+// Lazily initialize the AI client to avoid a hard crash on startup if the API key is missing.
+let ai: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAiClient = () => {
+    if (!process.env.API_KEY) {
+        throw new Error("API_KEY environment variable is not set. Please configure it in your deployment settings.");
+    }
+    if (!ai) {
+        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    }
+    return ai;
+};
 
 interface AvatarInput {
   businessType: string;
@@ -78,13 +85,17 @@ export const generateAvatarProfile = async (input: AvatarInput): Promise<string>
     const prompt = constructPrompt(input);
 
     try {
-        const response = await ai.models.generateContent({
+        const localAi = getAiClient();
+        const response = await localAi.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
         });
         return response.text;
     } catch (error) {
         console.error("Error calling Gemini API:", error);
+        if (error instanceof Error) {
+            throw new Error(`The AI model failed to respond: ${error.message}`);
+        }
         throw new Error("The AI model failed to respond. Please try again later.");
     }
 };

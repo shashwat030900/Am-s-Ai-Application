@@ -26,6 +26,7 @@ export const N8nWorkflowApp: React.FC<N8nWorkflowAppProps> = ({ onNavigateBack }
     const [jsonData, setJsonData] = useState(exampleJson);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isCorsError, setIsCorsError] = useState(false);
     const [response, setResponse] = useState<string | null>(null);
 
     const handleSend = useCallback(async () => {
@@ -45,6 +46,7 @@ export const N8nWorkflowApp: React.FC<N8nWorkflowAppProps> = ({ onNavigateBack }
         setIsLoading(true);
         setResponse(null);
         setError(null);
+        setIsCorsError(false);
 
         try {
             const result = await sendToN8nWorkflow(webhookUrl, parsedPayload);
@@ -52,11 +54,21 @@ export const N8nWorkflowApp: React.FC<N8nWorkflowAppProps> = ({ onNavigateBack }
             setResponse(formattedResult);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
-            setError(`Failed to execute workflow. ${errorMessage}`);
+            if (errorMessage.startsWith('CORS Error:')) {
+                setIsCorsError(true);
+                setError(errorMessage);
+            } else {
+                setError(`Failed to execute workflow. ${errorMessage}`);
+            }
         } finally {
             setIsLoading(false);
         }
     }, [webhookUrl, jsonData]);
+
+    const handleCloseModal = () => {
+        setError(null);
+        setIsCorsError(false);
+    }
 
     return (
         <>
@@ -110,7 +122,7 @@ export const N8nWorkflowApp: React.FC<N8nWorkflowAppProps> = ({ onNavigateBack }
                     <div className="bg-gray-800 rounded-lg shadow-lg p-6 border-l-4 border-yellow-500">
                         <h3 className="text-lg font-semibold text-yellow-400 mb-2">Having Connection Issues?</h3>
                         <p className="text-gray-300 text-sm mb-3">
-                            If you see an error like "Failed to fetch" or "CORS policy", it's likely due to browser security rules. Your n8n server needs to explicitly permit requests from this web application.
+                            If you see a "Failed to fetch" or "CORS policy" error, it's due to browser security rules. Your n8n server needs to explicitly permit requests from this web application.
                         </p>
                         <p className="text-gray-300 text-sm">
                             <strong>Solution:</strong> You need to configure the CORS settings on your n8n instance. This is typically done by setting the <code className="bg-gray-700 text-indigo-300 px-1 py-0.5 rounded">N8N_CORS_ALLOW_ORIGIN</code> environment variable to allow this dashboard's URL.
@@ -138,8 +150,17 @@ export const N8nWorkflowApp: React.FC<N8nWorkflowAppProps> = ({ onNavigateBack }
                     )}
                 </div>
             </main>
-            <Modal isOpen={!!error} onClose={() => setError(null)} title="Connection Warning">
-                <p>{error}</p>
+            <Modal isOpen={!!error} onClose={handleCloseModal} title={isCorsError ? "CORS Connection Error" : "Connection Warning"}>
+                {isCorsError ? (
+                    <div className="space-y-3">
+                        <p>{error}</p>
+                        <p className="font-semibold text-yellow-300">
+                            To fix this, you must configure your n8n server. Please scroll down and follow the instructions in the "Having Connection Issues?" section.
+                        </p>
+                    </div>
+                ) : (
+                    <p>{error}</p>
+                )}
             </Modal>
         </>
     );

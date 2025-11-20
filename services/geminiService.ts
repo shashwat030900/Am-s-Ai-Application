@@ -15,13 +15,13 @@ const getAiClient = () => {
 };
 
 interface AvatarInput {
-  businessType: string;
-  problem: string;
-  solution: string;
+    businessType: string;
+    problem: string;
+    solution: string;
 }
 
 const constructPrompt = ({ businessType, problem, solution }: AvatarInput): string => {
-  return `
+    return `
 You are an expert marketing strategist specializing in creating detailed customer avatars for the Indian market.
 
 **Business Type:** ${businessType}
@@ -83,6 +83,66 @@ Describe the future consequences if the problem remains unsolved. Paint a pictur
 
 export const generateAvatarProfile = async (input: AvatarInput): Promise<string> => {
     const prompt = constructPrompt(input);
+
+    try {
+        const localAi = getAiClient();
+        const response = await localAi.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error calling Gemini API:", error);
+        if (error instanceof Error) {
+            throw new Error(`The AI model failed to respond: ${error.message}`);
+        }
+        throw new Error("The AI model failed to respond. Please try again later.");
+    }
+};
+
+export const generateMasterPrompt = async (draftPrompt: string): Promise<string> => {
+    const systemInstruction = `
+Your mission: diagnose weaknesses in a draft prompt, then deliver a clearly improved version that stays true to the author's original intent and audience.
+
+Phase 1 - Rapid Diagnosis
+Summarise the draft prompt's goal and structure in one short paragraph. Then assess each of the following criteria using: Pass, Caution, or Fail. Add a one-line note explaining each rating.
+Criteria:
+1. Task fidelity
+2. Clarity and Specificity
+3. Context Utilisation
+4. Accuracy and Verifiability
+5. Error Handling
+6. Resource Efficiency (tokens / latency)
+
+High-Priority Triggers (mark any that apply):
+• Context Preservation
+• Intent Refinement
+• Error Prevention
+
+Phase 2 - Precision Rewrite
+1. Apply improvements only where Caution or Fail was noted.
+2. Preserve purpose, scope, and persona.
+3. Use or introduce a numbered-step structure.
+4. Optimise for brevity and clarity.
+5. If any trigger was marked, explicitly show how you addressed it (e.g. added context, clarified intent, inserted fallback logic).
+
+Deliverables
+• Before/After micro-example (2 lines or less) showing a key improvement. If not applicable, give a one-sentence rationale.
+• The revised prompt, enclosed in triple backticks for easy copy/paste.
+
+Validation Checklist:
+• Purpose and audience intact
+• Tone and style consistent
+• Clarity, logic, and structure improved
+• Trigger issues resolved
+`;
+
+    const prompt = `
+${systemInstruction}
+
+Draft Prompt:
+${draftPrompt}
+`;
 
     try {
         const localAi = getAiClient();

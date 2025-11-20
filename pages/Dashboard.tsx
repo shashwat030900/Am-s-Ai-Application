@@ -4,11 +4,10 @@ import { Header } from '../components/Header';
 
 interface DashboardProps {
   onNavigateToAvatar: () => void;
-  onNavigateToResearch: () => void;
-  onNavigateToN8n: () => void;
+  onNavigateToMasterPrompt: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToResearch, onNavigateToN8n }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt }) => {
   return (
     <>
       <Header title="AI Application Dashboard" subtitle="A collection of powerful AI tools" />
@@ -29,34 +28,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
               Launch App
             </button>
           </div>
-          
-          {/* App Card 2 */}
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-yellow-500 transition-all duration-300 transform hover:-translate-y-1">
-            <div>
-              <h2 className="text-xl font-bold text-yellow-400 mb-2">AI Research Assistant</h2>
-              <p className="text-gray-400 text-sm mb-6 h-20">
-                Leverage Google Search for up-to-date, cited research on any topic. Get comprehensive summaries with linked sources.
-              </p>
-            </div>
-            <button
-              onClick={onNavigateToResearch}
-              className="w-full bg-yellow-600 text-white font-bold py-2 px-4 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-4 focus:ring-yellow-500 focus:ring-opacity-50 transition-all"
-            >
-              Launch App
-            </button>
-          </div>
 
-          {/* New App Card 3 */}
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-indigo-500 transition-all duration-300 transform hover:-translate-y-1">
+          {/* Master Prompt Generator Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-green-500 transition-all duration-300 transform hover:-translate-y-1">
             <div>
-              <h2 className="text-xl font-bold text-indigo-400 mb-2">n8n Workflow Connector</h2>
+              <h2 className="text-xl font-bold text-green-400 mb-2">Master Prompt Generator</h2>
               <p className="text-gray-400 text-sm mb-6 h-20">
-                Send data to any n8n webhook and receive results in real-time. A powerful tool to connect your dashboard to external automations.
+                Diagnose and refine your AI prompts. Get a rapid diagnosis and a precision rewrite to ensure your prompts deliver the best results.
               </p>
             </div>
             <button
-              onClick={onNavigateToN8n}
-              className="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all"
+              onClick={onNavigateToMasterPrompt}
+              className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-all"
             >
               Launch App
             </button>

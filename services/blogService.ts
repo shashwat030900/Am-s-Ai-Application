@@ -20,33 +20,86 @@ export interface BlogInput {
 }
 
 const fetchWebsiteContent = async (url: string): Promise<string> => {
-    try {
-        // Use CORS proxy to bypass CORS restrictions
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    // List of CORS proxies to try
+    const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    ];
 
-        const response = await fetch(proxyUrl);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch website: ${response.statusText}`);
+    let lastError: Error | null = null;
+
+    // Try each proxy
+    for (const proxyUrl of proxies) {
+        try {
+            console.log(`Attempting to fetch website via proxy: ${proxyUrl}`);
+
+            const response = await fetch(proxyUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json, text/html',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            let html: string;
+
+            // Handle different proxy response formats
+            const contentType = response.headers.get('content-type');
+            if (contentType?.includes('application/json')) {
+                const data = await response.json();
+                // allorigins.win format
+                if (data.contents) {
+                    html = data.contents;
+                }
+                // Other JSON formats
+                else if (typeof data === 'string') {
+                    html = data;
+                } else {
+                    throw new Error('Unexpected JSON response format');
+                }
+            } else {
+                // Plain text/html response
+                html = await response.text();
+            }
+
+            if (!html || html.trim().length === 0) {
+                throw new Error('Empty response from proxy');
+            }
+
+            // Basic HTML parsing to extract text content
+            // Remove script and style tags
+            const cleanHtml = html
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            if (cleanHtml.length < 50) {
+                throw new Error('Insufficient content extracted from website');
+            }
+
+            // Limit to first 3000 characters to avoid token limits
+            console.log(`Successfully fetched website content (${cleanHtml.length} characters)`);
+            return cleanHtml.substring(0, 3000);
+
+        } catch (error) {
+            console.error(`Proxy failed: ${proxyUrl}`, error);
+            lastError = error instanceof Error ? error : new Error(String(error));
+            // Continue to next proxy
         }
-
-        const data = await response.json();
-        const html = data.contents;
-
-        // Basic HTML parsing to extract text content
-        // Remove script and style tags
-        const cleanHtml = html
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-            .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-            .replace(/<[^>]+>/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
-
-        // Limit to first 3000 characters to avoid token limits
-        return cleanHtml.substring(0, 3000);
-    } catch (error) {
-        console.error("Error fetching website:", error);
-        throw new Error("Unable to fetch website content. Please check the URL and try again.");
     }
+
+    // All proxies failed
+    console.error("All CORS proxies failed to fetch website content");
+    throw new Error(
+        `Unable to fetch website content. The website may be blocking automated requests or all proxy services are currently unavailable. ` +
+        `Please try again later or use a different website URL. Last error: ${lastError?.message || 'Unknown error'}`
+    );
 };
 
 const constructPrompt = (input: BlogInput, websiteContent: string): string => {

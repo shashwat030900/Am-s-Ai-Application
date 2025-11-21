@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getHistory, clearHistory, deleteHistoryItem, formatRelativeTime, type HistoryEntry } from '../services/historyService';
 
-export const HistoryPanel: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
+interface HistoryPanelProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onClose }) => {
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [copySuccess, setCopySuccess] = useState<string | null>(null);
@@ -70,28 +74,6 @@ export const HistoryPanel: React.FC = () => {
 
     return (
         <>
-            {/* Toggle Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="fixed right-4 top-20 z-40 bg-cyan-600 text-white p-3 rounded-full shadow-lg hover:bg-cyan-700 transition-all focus:outline-none focus:ring-4 focus:ring-cyan-500"
-                title="Chat History"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                </svg>
-            </button>
-
             {/* Side Panel */}
             <div
                 className={`fixed right-0 top-0 h-full bg-gray-800 shadow-2xl z-50 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -101,7 +83,7 @@ export const HistoryPanel: React.FC = () => {
                 <div className="bg-gray-900 p-4 flex justify-between items-center border-b border-gray-700">
                     <h2 className="text-xl font-bold text-cyan-400">Chat History</h2>
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
                         className="text-gray-400 hover:text-white transition-colors"
                     >
                         <svg
@@ -241,7 +223,7 @@ export const HistoryPanel: React.FC = () => {
             {/* Overlay */}
             {isOpen && (
                 <div
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                     className="fixed inset-0 bg-black bg-opacity-50 z-40"
                 />
             )}

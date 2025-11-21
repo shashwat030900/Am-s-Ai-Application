@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Header } from '../components/Header';
-import { HistoryPanel } from '../components/HistoryPanel';
 
 interface DashboardProps {
   onNavigateToAvatar: () => void;
@@ -14,22 +13,8 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToSEOBlog, onLogout }) => {
   return (
     <>
-      <div className="flex justify-between items-center bg-gray-800 p-4 shadow-md">
+      <div className="bg-gray-800 p-6 shadow-md">
         <Header title="AI Application Dashboard" subtitle="A collection of powerful AI tools" />
-        <div className="flex gap-3">
-          <button
-            onClick={onNavigateToProfile}
-            className="bg-cyan-600 text-white font-bold py-2 px-4 rounded-md hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:ring-opacity-50 transition-all text-sm"
-          >
-            Profile
-          </button>
-          <button
-            onClick={onLogout}
-            className="bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 transition-all text-sm"
-          >
-            Logout
-          </button>
-        </div>
       </div>
       <main className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -82,7 +67,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
           </div>
         </div>
       </main>
-      <HistoryPanel />
     </>
   );
 };

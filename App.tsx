@@ -8,6 +8,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { SEOBlogWriterApp } from './pages/SEOBlogWriterApp';
 import { Footer } from './components/Footer';
 import { Chatbot } from './components/Chatbot';
+import { Sidebar } from './components/Sidebar';
+import { HistoryPanel } from './components/HistoryPanel';
 import { isAuthenticated, logout, hasProfile } from './services/authService';
 
 export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'seoBlog';
@@ -16,6 +18,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
   const [profileComplete, setProfileComplete] = useState<boolean>(hasProfile());
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const navigateTo = (page: Page) => {
     setCurrentPage(page);
@@ -70,11 +73,26 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col relative">
-      <div className="flex-grow">
-        {renderPage()}
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex relative">
+      {/* Sidebar */}
+      <Sidebar
+        onNavigateToProfile={() => navigateTo('profile')}
+        onLogout={handleLogout}
+        onOpenHistory={() => setIsHistoryOpen(true)}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        <div className="flex-grow">
+          {renderPage()}
+        </div>
+        <Footer />
       </div>
-      <Footer />
+
+      {/* History Panel */}
+      <HistoryPanel isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
+
+      {/* Chatbot */}
       <Chatbot />
     </div>
   );

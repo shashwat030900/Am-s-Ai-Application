@@ -5,19 +5,20 @@ import { AvatarOutput } from '../components/AvatarOutput';
 import { Loader } from '../components/Loader';
 import { Modal } from '../components/Modal';
 import { generateAvatarProfile } from '../services/geminiService';
+import { saveHistory } from '../services/historyService';
 import { Header } from '../components/Header';
 
 interface CustomerAvatarAppProps {
-    onNavigateBack: () => void;
+  onNavigateBack: () => void;
 }
 
 const avatarLoadingMessages = [
-    "Warming up the AI thought engine...",
-    "Analyzing market nuances for India...",
-    "Consulting with marketing strategists...",
-    "Crafting your detailed customer persona...",
-    "Mapping emotional triggers...",
-    "Adding the final strategic touches...",
+  "Warming up the AI thought engine...",
+  "Analyzing market nuances for India...",
+  "Consulting with marketing strategists...",
+  "Crafting your detailed customer persona...",
+  "Mapping emotional triggers...",
+  "Adding the final strategic touches...",
 ];
 
 
@@ -34,7 +35,7 @@ export const CustomerAvatarApp: React.FC<CustomerAvatarAppProps> = ({ onNavigate
       setError('All input fields are required. Please provide details for Business Type, Problem, and Solution.');
       return;
     }
-    
+
     setIsLoading(true);
     setAvatarMarkdown('');
     setError(null);
@@ -42,6 +43,8 @@ export const CustomerAvatarApp: React.FC<CustomerAvatarAppProps> = ({ onNavigate
     try {
       const markdown = await generateAvatarProfile({ businessType, problem, solution });
       setAvatarMarkdown(markdown);
+      // Save to history
+      saveHistory('Customer Avatar', { businessType, problem, solution }, markdown);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
       setError(`Failed to generate avatar. ${errorMessage}`);
@@ -52,7 +55,7 @@ export const CustomerAvatarApp: React.FC<CustomerAvatarAppProps> = ({ onNavigate
 
   return (
     <>
-      <Header 
+      <Header
         title="Customer Avatar Deep Dive"
         subtitle="AI-Powered Insights for the Indian Market"
         onBack={onNavigateBack}

@@ -3,6 +3,7 @@ import { Header } from '../components/Header';
 import { Loader } from '../components/Loader';
 import { Modal } from '../components/Modal';
 import { generateMasterPrompt } from '../services/geminiService';
+import { saveHistory } from '../services/historyService';
 
 interface MasterPromptAppProps {
     onNavigateBack: () => void;
@@ -35,6 +36,8 @@ export const MasterPromptApp: React.FC<MasterPromptAppProps> = ({ onNavigateBack
         try {
             const markdown = await generateMasterPrompt(draftPrompt);
             setResultMarkdown(markdown);
+            // Save to history
+            saveHistory('Master Prompt', { draftPrompt }, markdown);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(`Failed to generate master prompt. ${errorMessage}`);

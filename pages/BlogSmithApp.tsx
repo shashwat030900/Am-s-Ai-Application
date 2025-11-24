@@ -42,6 +42,7 @@ import {
     generateImage,
     publishToWordPress,
 } from '../services/blogSmithService';
+import { saveHistory } from '../services/historyService';
 
 const IMAGE_PLACEHOLDER_START = '[GENERATE_IMAGE';
 
@@ -145,50 +146,80 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                 throw new Error("Blog post generation failed to return a result.");
             }
 
-            setBlogTitle(blogResult.title);
-            setBlogContent(blogResult.content);
+            // Store results locally
+            const generatedTitle = blogResult.title;
+            let generatedContent = [...blogResult.content];
+            let generatedHeaderUrl = '';
 
-            // Step 2: Generate the header image and display it.
+            // Step 2: Generate the header image
             try {
                 const headerResult = await generateImage(topic);
                 if (headerResult) {
-                    setHeaderImageUrl(headerResult.imageUrl);
+                    generatedHeaderUrl = headerResult.imageUrl;
                 }
             } catch (headerImageError) {
                 console.error('Failed to generate header image:', headerImageError);
             }
 
-            // Step 3: Sequentially generate inline images and update the content.
-            const newContent = [...blogResult.content];
-            let generatedImageCount = 0;
-
-            for (let i = 0; i < newContent.length; i++) {
-                if (newContent[i].startsWith(IMAGE_PLACEHOLDER_START)) {
-                    if (generatedImageCount < numberOfInlineImages) {
-                        const hintMatch = newContent[i].match(/:(.*)\]/);
-                        const hint = hintMatch ? hintMatch[1].trim() : undefined;
-
-                        try {
-                            const imageResult = await generateImage(topic, hint);
-                            if (imageResult?.imageUrl) {
-                                const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
-                                newContent[i] = imageHtml;
-                                setBlogContent([...newContent]);
-                            } else {
-                                throw new Error("Generated image result is missing URL.");
-                            }
-                        } catch (imageError) {
-                            console.error(`Failed to generate inline image at index ${i}:`, imageError);
-                            newContent[i] = `<p><em>[Error: Image could not be generated]</em></p>`;
-                            setBlogContent([...newContent]);
-                        }
-                        generatedImageCount++;
-                    } else {
-                        newContent[i] = '';
-                    }
+            // Step 3: Generate inline images in parallel
+            const imageIndices: number[] = [];
+            generatedContent.forEach((item, index) => {
+                if (item.startsWith(IMAGE_PLACEHOLDER_START)) {
+                    imageIndices.push(index);
                 }
-            }
-            setBlogContent(newContent.filter(item => item !== ''));
+            });
+
+            // Process only up to numberOfInlineImages
+            const indicesToGenerate = imageIndices.slice(0, numberOfInlineImages);
+            const indicesToRemove = imageIndices.slice(numberOfInlineImages);
+
+            // Remove excess placeholders
+            indicesToRemove.forEach(index => {
+                generatedContent[index] = '';
+            });
+
+            // Generate images for the valid placeholders
+            const imagePromises = indicesToGenerate.map(async (index) => {
+                const item = generatedContent[index];
+                const hintMatch = item.match(/:(.*)\]/);
+                const hint = hintMatch ? hintMatch[1].trim() : undefined;
+
+                try {
+                    const imageResult = await generateImage(topic, hint);
+                    if (imageResult?.imageUrl) {
+                        const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" data-hint="${hint || ''}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
+                        generatedContent[index] = imageHtml;
+                    } else {
+                        generatedContent[index] = `<p><em>[Error: Image could not be generated]</em></p>`;
+                    }
+                } catch (imageError) {
+                    console.error(`Failed to generate inline image at index ${index}:`, imageError);
+                    generatedContent[index] = `<p><em>[Error: Image could not be generated]</em></p>`;
+                }
+            });
+
+            await Promise.all(imagePromises);
+
+            // Filter out empty strings from removed placeholders
+            const finalContent = generatedContent.filter(item => item !== '');
+
+            // Step 4: Update State ONCE
+            setBlogTitle(generatedTitle);
+            setBlogContent(finalContent);
+            setHeaderImageUrl(generatedHeaderUrl);
+
+            // Step 5: Save to History
+            saveHistory(
+                'SEO Blog Writer',
+                {
+                    topic,
+                    wordCount,
+                    language,
+                    clientWebsiteUrl,
+                    numberOfInlineImages
+                },
+                finalContent.join('')
+            );
 
         } catch (error) {
             console.error('Error generating content:', error);
@@ -242,11 +273,20 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
         if (!topic) return;
         setRegeneratingIndex(index);
         try {
-            const imageResult = await generateImage(topic);
+            // Extract hint from existing content if possible
+            const existingContent = blogContent[index];
+            const hintMatch = existingContent.match(/data-hint="([^"]*)"/);
+            const hint = hintMatch ? hintMatch[1] : undefined;
+
+            const imageResult = await generateImage(topic, hint);
             if (imageResult) {
                 setBlogContent(currentContent => {
                     const newContent = [...currentContent];
-                    const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
+                    const existingContent = newContent[index];
+                    const hintMatch = existingContent.match(/data-hint="([^"]*)"/);
+                    const hint = hintMatch ? hintMatch[1] : undefined;
+
+                    const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" data-hint="${hint || ''}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
                     newContent[index] = imageHtml;
                     return newContent;
                 });
@@ -292,13 +332,29 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
         }
     };
 
-    const handleDownloadImage = (imageUrl: string, filename: string) => {
-        const link = document.createElement('a');
-        link.href = imageUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleDownloadImage = async (imageUrl: string, filename: string) => {
+        try {
+            // Fetch the image as a blob to bypass CORS restrictions
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+
+            // Create a temporary object URL
+            const objectUrl = URL.createObjectURL(blob);
+
+            // Create and click download link
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Clean up the object URL
+            URL.revokeObjectURL(objectUrl);
+        } catch (error) {
+            console.error('Failed to download image:', error);
+            alert('Failed to download image. Please try again.');
+        }
     };
 
     return (
@@ -431,7 +487,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                                 />
                             )}
                             {isEditing && headerImageUrl && (
-                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-t-lg transition-opacity opacity-0 group-hover:opacity-100">
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-t-lg transition-opacity opacity-0 group-hover:opacity-100 z-10">
                                     <Button onClick={handleRegenerateHeaderImage} disabled={regeneratingHeader} variant="secondary">
                                         {regeneratingHeader ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                                         Regenerate
@@ -497,7 +553,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                                                         referrerPolicy="no-referrer"
                                                     />
                                                     {isEditing && (
-                                                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-lg transition-opacity opacity-0 group-hover:opacity-100">
+                                                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-lg transition-opacity opacity-0 group-hover:opacity-100 z-10">
                                                             <Button onClick={() => handleRegenerateInlineImage(index)} disabled={isRegenerating} variant="secondary" size="sm">
                                                                 {isRegenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                                                                 Regenerate

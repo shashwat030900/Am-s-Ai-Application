@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS OTP Test</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>EmailJS OTP Test</h1>
+    <p>This will test if EmailJS is receiving the OTP parameter correctly.</p>
+    
+    <button onclick="testEmail()">Send Test Email</button>
+    <div id="result"></div>
+
+    <script>
+        function testEmail() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Sending...';
+
+            // Your EmailJS credentials
+            const SERVICE_ID = 'service_i72gemk';
+            const TEMPLATE_ID = 'template_ijikfjg';
+            const PUBLIC_KEY = 'yu5Djx0cxDIIN5DAm';
+
+            // Generate test OTP
+            const testOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            const templateParams = {
+                to_email: 'teamai7210@gmail.com',
+                otp: testOTP
+            };
+
+            console.log('Sending with params:', templateParams);
+            console.log('OTP should be:', testOTP);
+
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    resultDiv.innerHTML = `
+                        <p style="color: green;">✅ Email sent successfully!</p>
+                        <p><strong>OTP was: ${testOTP}</strong></p>
+                        <p>Check your email (teamai7210@gmail.com) to see if the OTP appears.</p>
+                    `;
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    resultDiv.innerHTML = `<p style="color: red;">❌ Failed: ${JSON.stringify(error)}</p>`;
+                });
+        }
+    </script>
+</body>
+</html>

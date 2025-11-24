@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import emailjs from '@emailjs/browser';
 
 // Simulated Auth Service with Real EmailJS
@@ -33,13 +34,28 @@ export const sendOtp = async (email: string): Promise<boolean> => {
 
     // 5. Send Email via EmailJS
     try {
+        // Calculate expiry time (15 minutes from now)
+        const expiryTime = new Date(Date.now() + 15 * 60 * 1000);
+        const timeString = expiryTime.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+
         const templateParams = {
             to_email: email,
-            otp_code: otp,
+            otp: otp,
+            time: timeString,
         };
 
+        console.log("Attempting to send OTP via EmailJS...");
+        console.log("Service ID:", SERVICE_ID);
+        console.log("Template ID:", TEMPLATE_ID);
+        console.log("Public Key:", PUBLIC_KEY);
+        console.log("Template Params:", JSON.stringify(templateParams, null, 2));
+
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
-        console.log(`[EmailJS] OTP sent to ${email}`);
+        console.log(`[EmailJS] OTP sent to ${email}. OTP was: ${otp}`);
         return true;
     } catch (error) {
         console.error('[EmailJS] Failed to send OTP:', error);

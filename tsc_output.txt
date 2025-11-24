@@ -1,0 +1,23 @@
+﻿components/ui/dropdown-menu.tsx(5,40): error TS2307: Cannot find module '@radix-ui/react-dropdown-menu' or its corresponding type declarations.
+pages/BlogSmithApp.tsx(392,40): error TS2322: Type '{ children: string; htmlFor: string; className: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(405,40): error TS2322: Type '{ children: string; htmlFor: string; className: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(656,36): error TS2322: Type '{ children: string; htmlFor: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(672,36): error TS2322: Type '{ children: string; htmlFor: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(682,36): error TS2322: Type '{ children: string; htmlFor: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(692,36): error TS2322: Type '{ children: string; htmlFor: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+pages/BlogSmithApp.tsx(704,36): error TS2322: Type '{ children: string; htmlFor: string; }' is not assignable to type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+  Property 'htmlFor' does not exist on type 'IntrinsicAttributes & HTMLAttributes<HTMLLabelElement> & VariantProps<(props?: ClassProp) => string> & RefAttributes<...>'.
+services/authService.ts(12,32): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+services/authService.ts(13,33): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+services/authService.ts(14,32): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+services/blogSmithService.ts(128,73): error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+  Type 'never' has no call signatures.
+services/blogSmithService.ts(180,73): error TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+  Type 'never' has no call signatures.
+services/contentResearchService.ts(46,13): error TS2353: Object literal may only specify known properties, and 'tools' does not exist in type 'GenerateContentParameters'.

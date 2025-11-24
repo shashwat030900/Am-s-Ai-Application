@@ -171,7 +171,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                         try {
                             const imageResult = await generateImage(topic, hint);
                             if (imageResult?.imageUrl) {
-                                const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
+                                const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
                                 newContent[i] = imageHtml;
                                 setBlogContent([...newContent]);
                             } else {
@@ -246,7 +246,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
             if (imageResult) {
                 setBlogContent(currentContent => {
                     const newContent = [...currentContent];
-                    const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
+                    const imageHtml = `<img src="${imageResult.imageUrl}" alt="${topic}" referrerpolicy="no-referrer" style="float: right; width: 50%; margin-left: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;" />`;
                     newContent[index] = imageHtml;
                     return newContent;
                 });
@@ -261,7 +261,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
     const handlePublish = async () => {
         setIsPublishing(true);
         try {
-            const headerImageHtml = headerImageUrl ? `<img src="${headerImageUrl}" alt="${topic}" style="width: 100%; height: auto; border-radius: 0.5rem; display: block; margin: 1rem auto; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />` : '';
+            const headerImageHtml = headerImageUrl ? `<img src="${headerImageUrl}" alt="${topic}" referrerpolicy="no-referrer" style="width: 100%; height: auto; border-radius: 0.5rem; display: block; margin: 1rem auto; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />` : '';
             const fullContent = headerImageHtml + blogContent.join('');
 
             const result = await publishToWordPress(
@@ -427,6 +427,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                                     src={headerImageUrl}
                                     alt={topic}
                                     className="w-full h-auto rounded-t-lg"
+                                    referrerPolicy="no-referrer"
                                 />
                             )}
                             {isEditing && headerImageUrl && (
@@ -493,6 +494,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                                                         src={imageUrl}
                                                         alt={topic}
                                                         className="w-full h-auto rounded-lg shadow-md"
+                                                        referrerPolicy="no-referrer"
                                                     />
                                                     {isEditing && (
                                                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-lg transition-opacity opacity-0 group-hover:opacity-100">

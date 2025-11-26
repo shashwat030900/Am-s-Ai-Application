@@ -159,3 +159,46 @@ ${draftPrompt}
         throw new Error("The AI model failed to respond. Please try again later.");
     }
 };
+
+// Generic content generation function with retry logic
+export const generateContent = async (prompt: string): Promise<string> => {
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 second
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            const localAi = getAiClient();
+
+            // Try primary model first, fallback to different model on last attempt
+            const modelName = attempt < maxRetries - 1 ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+
+            const response = await localAi.models.generateContent({
+                model: modelName,
+                contents: prompt,
+            });
+            return response.text;
+        } catch (error: any) {
+            console.error(`Error calling Gemini API (attempt ${attempt + 1}/${maxRetries}):`, error);
+
+            // Check if it's a 503 overload error or similar
+            const isOverloadError = error?.message?.includes('overloaded') ||
+                error?.message?.includes('503') ||
+                error?.message?.includes('UNAVAILABLE');
+
+            // If it's the last attempt or not an overload error, throw
+            if (attempt === maxRetries - 1 || !isOverloadError) {
+                if (error instanceof Error) {
+                    throw new Error(`AI generation failed: ${error.message}`);
+                }
+                throw new Error("The AI model failed to respond. Please check your API key and try again.");
+            }
+
+            // Wait before retrying (exponential backoff)
+            const delay = baseDelay * Math.pow(2, attempt);
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+
+    throw new Error("Failed after multiple retries. Please try again later.");
+};

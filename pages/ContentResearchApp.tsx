@@ -4,6 +4,7 @@ import { Input } from '../components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { Loader2, Search, ArrowLeft, ExternalLink, FileText, Lightbulb } from 'lucide-react';
 import { researchTopic, ResearchResult } from '../services/contentResearchService';
+import { saveHistory } from '../services/historyService';
 import ReactMarkdown from 'react-markdown';
 
 interface ContentResearchAppProps {
@@ -25,6 +26,9 @@ export const ContentResearchApp: React.FC<ContentResearchAppProps> = ({ onNaviga
         try {
             const researchResult = await researchTopic(topic);
             setResult(researchResult);
+
+            // Save to history
+            saveHistory('Content Research', { topic }, researchResult.summary);
         } catch (error) {
             console.error('Research error:', error);
             alert(error instanceof Error ? error.message : 'Failed to conduct research.');
@@ -120,20 +124,29 @@ export const ContentResearchApp: React.FC<ContentResearchAppProps> = ({ onNaviga
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-white">
                                     <Lightbulb className="h-6 w-6 text-cyan-400" />
-                                    <span>Content Ideas</span>
+                                    <span>Content Ideas ({result.contentIdeas.length})</span>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <ul className="space-y-3">
+                                <div className="space-y-4">
                                     {result.contentIdeas.map((idea, index) => (
-                                        <li key={index} className="flex items-start gap-3 text-gray-300">
-                                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-600 text-white flex items-center justify-center text-sm font-bold">
-                                                {index + 1}
-                                            </span>
-                                            <span className="flex-1">{idea}</span>
-                                        </li>
+                                        <div key={index} className="p-4 bg-gray-700 rounded-lg border border-gray-600">
+                                            <div className="flex items-start gap-3">
+                                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center text-sm font-bold">
+                                                    {index + 1}
+                                                </span>
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg font-semibold text-cyan-300 mb-2">
+                                                        {idea.title}
+                                                    </h3>
+                                                    <div className="text-gray-300 prose prose-invert prose-sm max-w-none">
+                                                        <ReactMarkdown>{idea.description}</ReactMarkdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </CardContent>
                         </Card>
 

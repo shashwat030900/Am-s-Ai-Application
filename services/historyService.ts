@@ -3,7 +3,7 @@ import { getCurrentUser } from './authService';
 // History Entry Model
 export interface HistoryEntry {
     id: string;
-    appName: 'Customer Avatar' | 'Master Prompt' | 'SEO Blog Writer';
+    appName: 'Customer Avatar' | 'Master Prompt' | 'SEO Blog Writer' | 'Content Research';
     timestamp: number;
     userEmail: string;
     input: any; // Flexible to accommodate different app inputs

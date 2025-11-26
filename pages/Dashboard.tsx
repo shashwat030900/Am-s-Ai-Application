@@ -8,10 +8,11 @@ interface DashboardProps {
   onNavigateToBlogSmith: () => void;
   onNavigateToContentResearch: () => void;
   onNavigateToN8nTest: () => void;
+  onNavigateToAdInsight: () => void;
   onLogout: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToN8nTest, onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToN8nTest, onNavigateToAdInsight, onLogout }) => {
   return (
     <>
       <div className="bg-gray-800 p-6 shadow-md">
@@ -94,6 +95,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
             <button
               onClick={onNavigateToN8nTest}
               className="w-full bg-orange-600 text-white font-bold py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50 transition-all"
+            >
+              Launch App
+            </button>
+          </div>
+
+          {/* AdInsight AI Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-purple-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <h2 className="text-xl font-bold text-purple-400 mb-2">AdInsight AI</h2>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Paste your ad reports, extract winning themes and keywords, then generate new content ideas powered by your data.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToAdInsight}
+              className="w-full bg-purple-600 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 transition-all"
             >
               Launch App
             </button>

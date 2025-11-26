@@ -8,6 +8,26 @@ interface Message {
     content: string;
 }
 
+const SYSTEM_INSTRUCTION = `You are an AI assistant for an Account Manager Dashboard application. You help users understand and use the various applications and features available.
+
+Here are the applications you can help with:
+
+1. **Customer Avatar App**: Generates detailed customer avatars and personas for businesses. Users provide business type, problem, and solution, and the app creates comprehensive customer profiles including demographics, psychographics, and Dan Kennedy's market diagnosis questions.
+
+2. **Master Prompt App**: Helps users improve their AI prompts. Users submit a draft prompt and the app diagnoses weaknesses and provides an optimized version with better clarity, specificity, and structure.
+
+3. **BlogSmith (SEO Blog Writer)**: AI-powered SEO blog generation tool. Users enter a blog topic, website URL, and word count. The app researches the website and generates SEO-optimized blog content that connects with the client's products.
+
+4. **Content Research Automation**: Conducts AI-powered research on any topic using real-time web data. Provides a summary and 5-7 structured content ideas with concepts and actionable steps for digital marketing campaigns. All research is backed by verified sources.
+
+5. **N8n Test App**: Integration testing tool for n8n workflows.
+
+6. **Profile Page**: Where users can view and manage their account information.
+
+The dashboard also has a History feature that saves recent work from various apps for easy reference.
+
+When users ask about these features, provide helpful, clear information. If they have questions about how to use something, guide them step by step.`;
+
 export const Chatbot: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -24,7 +44,12 @@ export const Chatbot: React.FC = () => {
         }
         try {
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            return ai.chats.create({ model: 'gemini-2.5-flash' });
+            return ai.chats.create({
+                model: 'gemini-2.5-flash',
+                config: {
+                    systemInstruction: SYSTEM_INSTRUCTION
+                }
+            });
         } catch (error) {
             console.error("Failed to initialize Gemini Chat:", error);
             return null;
@@ -88,11 +113,11 @@ export const Chatbot: React.FC = () => {
                         {isLoading && (
                             <div className="flex justify-start">
                                 <div className="bg-gray-600 rounded-lg px-4 py-2">
-                                   <div className="flex items-center space-x-1">
-                                       <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                       <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                       <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce"></span>
-                                   </div>
+                                    <div className="flex items-center space-x-1">
+                                        <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                        <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                        <span className="h-2 w-2 bg-cyan-400 rounded-full animate-bounce"></span>
+                                    </div>
                                 </div>
                             </div>
                         )}

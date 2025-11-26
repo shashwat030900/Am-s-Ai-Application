@@ -17,26 +17,37 @@ export interface ResearchSource {
     title: string;
 }
 
+export interface ContentIdea {
+    title: string;
+    description: string;
+}
+
 export interface ResearchResult {
     summary: string;
-    contentIdeas: string[];
+    contentIdeas: ContentIdea[];
     sources: ResearchSource[];
 }
 
 export const researchTopic = async (topic: string): Promise<ResearchResult> => {
-    const prompt = `
-Research the topic: "${topic}"
+    const prompt = `You are a digital marketing expert. Research the topic: "${topic}"
 
-Provide a comprehensive response in the following format:
+Provide your response in this EXACT format:
 
 ## Summary
-Write a concise 2-3 paragraph summary of the most important and recent information about this topic.
+[Write 2-3 paragraphs summarizing the most important and current information about this topic]
 
 ## Content Ideas
-List 5-7 specific content ideas that would be valuable for a digital marketing campaign targeting this topic. Each idea should be actionable and unique.
+[List exactly 7 actionable content ideas. For each idea, write it as a numbered item with a bold title followed by a description]
 
-Use real-time web data to ensure the information is current and authoritative.
-`;
+1. **[Compelling Title]**: [2-3 sentences describing the specific content idea and how to implement it. Include concrete details like platforms, formats, timing, etc.]
+
+2. **[Compelling Title]**: [2-3 sentences with specific implementation details]
+
+3. **[Compelling Title]**: [2-3 sentences with specific implementation details]
+
+Continue through idea 7.
+
+IMPORTANT: Make each idea specific and actionable with real examples. Don't be vague.`;
 
     try {
         const localAi = getAiClient();
@@ -50,59 +61,59 @@ Use real-time web data to ensure the information is current and authoritative.
 
         const text = response.text;
 
-        // Extract sources from grounding metadata
+        // Extract sources
         const sources: ResearchSource[] = [];
-        const metadata = (response as any).groundingMetadata; // Type assertion for grounding metadata
+        const metadata = (response as any).groundingMetadata;
+        if (metadata?.groundingChunks) {
+            metadata.groundingChunks.forEach((chunk: any) => {
+                if (chunk.web) {
+                    sources.push({
+                        uri: chunk.web.uri || '',
+                        title: chunk.web.title || 'Untitled'
+                    });
+                }
+            });
+        }
 
-        if (metadata?.searchEntryPoint?.renderedContent) {
-            // Parse grounding metadata if available
-            if (metadata.groundingChunks) {
-                metadata.groundingChunks.forEach((chunk: any) => {
-                    if (chunk.web) {
-                        sources.push({
-                            uri: chunk.web.uri || '',
-                            title: chunk.web.title || 'Untitled'
+        // Extract summary
+        const summaryMatch = text.match(/##\s*Summary\s*([\s\S]*?)(?=##|$)/i);
+        const summary = summaryMatch ? summaryMatch[1].trim() : text;
+
+        // Extract content ideas - simple numbered list with bold titles
+        const contentIdeas: ContentIdea[] = [];
+        const ideasMatch = text.match(/##\s*Content Ideas\s*([\s\S]*?)(?=##|$)/i);
+
+        if (ideasMatch) {
+            const ideasText = ideasMatch[1];
+            // Match numbered items: 1. **Title**: Description
+            const items = ideasText.match(/\d+\.\s*\*\*([^*]+)\*\*:\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+
+            if (items) {
+                items.forEach(item => {
+                    const match = item.match(/\d+\.\s*\*\*([^*]+)\*\*:\s*([\s\S]+)/);
+                    if (match) {
+                        contentIdeas.push({
+                            title: match[1].trim(),
+                            description: match[2].trim()
                         });
                     }
                 });
             }
         }
 
-        // Parse the response text to extract summary and content ideas
-        const summaryMatch = text.match(/##\s*Summary\s*([\s\S]*?)(?=##|$)/i);
-        const ideasMatch = text.match(/##\s*Content Ideas\s*([\s\S]*?)(?=##|$)/i);
-
-        const summary = summaryMatch ? summaryMatch[1].trim() : text;
-
-        // Extract bullet points from content ideas section
-        const contentIdeas: string[] = [];
-        if (ideasMatch) {
-            const ideasText = ideasMatch[1];
-            const bullets = ideasText.match(/[-*]\s*(.+)/g);
-            if (bullets) {
-                bullets.forEach(bullet => {
-                    const cleaned = bullet.replace(/^[-*]\s*/, '').trim();
-                    if (cleaned) contentIdeas.push(cleaned);
-                });
-            }
-        }
-
         return {
             summary,
-            contentIdeas: contentIdeas.length > 0 ? contentIdeas : ['No specific content ideas extracted. See summary for insights.'],
+            contentIdeas: contentIdeas.length > 0 ? contentIdeas : [{
+                title: 'No ideas extracted',
+                description: 'Please review the summary for insights.'
+            }],
             sources
         };
     } catch (error) {
-        console.error("Error calling Gemini API for research:", error);
+        console.error("Error calling Gemini API:", error);
         if (error instanceof Error) {
-            // Provide more specific error messages
-            if (error.message.includes('quota') || error.message.includes('429')) {
-                throw new Error('API quota exceeded. Please try using a different API key or wait before trying again.');
-            } else if (error.message.includes('API_KEY')) {
-                throw new Error('API key is invalid or not configured properly.');
-            }
             throw new Error(`Research failed: ${error.message}`);
         }
-        throw new Error("Research failed. Please try again later.");
+        throw new Error("Research failed. Please try again.");
     }
 };

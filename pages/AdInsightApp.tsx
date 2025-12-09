@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ArrowLeft, FileText, TrendingUp, Sparkles, Upload, Target, Lightbulb, Wand2 } from 'lucide-react';
+import { ArrowLeft, FileText, TrendingUp, Sparkles, Upload, Target, Lightbulb, Wand2, Image as ImageIcon, Download } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { generateContent } from '../services/geminiService';
+import { generateContent } from '../services/claudeService';
+import { saveHistory } from '../services/historyService';
+import { generateAllSceneImages, GeneratedSceneImage, downloadSceneImage } from '../services/imageGenerationService';
 
 interface AdInsightAppProps {
     onNavigateBack: () => void;
@@ -36,6 +38,9 @@ export const AdInsightApp: React.FC<AdInsightAppProps> = ({ onNavigateBack }) =>
     const [fullScript, setFullScript] = useState<string>('');
     const [isGeneratingFull, setIsGeneratingFull] = useState(false);
     const [scriptLanguage, setScriptLanguage] = useState<'English' | 'Hindi'>('English');
+    const [sceneImages, setSceneImages] = useState<GeneratedSceneImage[]>([]);
+    const [isGeneratingImages, setIsGeneratingImages] = useState(false);
+    const [imageProgress, setImageProgress] = useState({ current: 0, total: 0 });
 
     const analyzeReport = (text: string): ParsedData => {
         const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -234,6 +239,8 @@ Context:
 
 LANGUAGE REQUIREMENT: ${languageInstruction}
 
+STRUCTURE: Follow the AIDCA Principles (Attention, Interest, Desire, Conviction, Action) strictly.
+
 Create a PRODUCTION-READY script with clear sections. Use this EXACT format (NO markdown symbols like ** or *** or ---, just clean text):
 
 ═══════════════════════════════════════
@@ -242,31 +249,36 @@ FORMAT: ${script.format}
 DURATION: 15-25 seconds
 ═══════════════════════════════════════
 
-📍 SECTION 1: HOOK (0-3 SECONDS)
+📍 SECTION 1: ATTENTION (HOOK) (0-3 SECONDS)
+(Goal: Hook the audience immediately with a catchy headline or shocking statistic)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Opening Line: [Write exact dialogue]
 Visual: [Describe the shot]
 On-Screen Text: [What text appears]
 
-📍 SECTION 2: PROBLEM AGITATION (3-8 SECONDS)
+📍 SECTION 2: INTEREST (PROBLEM AGITATION) (3-8 SECONDS)
+(Goal: Keep them reading by explaining the problem or situation relevant to them)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Voiceover: [Exact script]
 Visual: [Describe what viewer sees]
 On-Screen Text: [Key text overlay]
 
-📍 SECTION 3: SOLUTION (8-15 SECONDS)
+📍 SECTION 3: DESIRE (SOLUTION) (8-15 SECONDS)
+(Goal: Show them the benefits of your solution to create a "want")
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Voiceover: [Exact script]
 Visual: [Show the solution in action]
 On-Screen Text: [Main benefit text]
 
-📍 SECTION 4: SOCIAL PROOF (15-20 SECONDS)
+📍 SECTION 4: CONVICTION (SOCIAL PROOF) (15-20 SECONDS)
+(Goal: Prove your claims with testimonials or data to remove doubt)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Voiceover: [Build credibility]
 Visual: [Show testimonials/results]
 On-Screen Text: [Stats or quotes]
 
-📍 SECTION 5: CALL-TO-ACTION (20-25 SECONDS)
+📍 SECTION 5: ACTION (CALL-TO-ACTION) (20-25 SECONDS)
+(Goal: Tell them exactly what to do next)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Voiceover: [Clear next step]
 Visual: [CTA button/link visual]
@@ -278,11 +290,30 @@ On-Screen Text: [Action text]
 💡 PRO TIP: [One production insight]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Make it compelling, specific, and ready to hand to a video editor. Include exact words to say and specific shots to capture. Optimize for ${script.format.includes('Reel') ? 'Instagram Reels' : 'video ads'}.`;
+Make it compelling, specific, and ready to hand to a video editor. Include exact words to say and specific shots to capture. Optimize for ${script.format.includes('Reel') ? 'Instagram Reels' : 'video ads'}.
+294: 
+295: CRITICAL VISUAL INSTRUCTION:
+296: For the 'Visual' fields, do NOT use generic descriptions like "Person drinking water".
+297: INSTEAD, use HIGHLY SPECIFIC, RELATABLE, and CULTURALLY RELEVANT details that connect with the viewer's daily habits.
+298: Example: Instead of "Show someone drinking", write "Close-up of a hand pouring water into a traditional copper glass, condensation forming on the metal."
+299: Example: Instead of "Person looking at phone", write "Tired mother checking her phone in a dim kitchen at 11 PM, a half-eaten snack on the counter."
+300: 
+301: MAKE IT VISCERAL, EMOTIONAL, AND REAL. The viewer should feel like they are looking at a real life scene.`;
 
         try {
             const result = await generateContent(prompt);
             setFullScript(result);
+
+            // Save to history
+            saveHistory('AdInsight AI', {
+                topic: generatorInput,
+                title: script.title,
+                format: script.format
+            }, result);
+
+            // Reset images when new script is generated
+            setSceneImages([]);
+
         } catch (error) {
             console.error('Error generating full script:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -298,6 +329,23 @@ Make it compelling, specific, and ready to hand to a video editor. Include exact
         }
     };
 
+    const handleGenerateImages = async () => {
+        if (!fullScript) return;
+
+        setIsGeneratingImages(true);
+        setImageProgress({ current: 0, total: 0 });
+        try {
+            const images = await generateAllSceneImages(fullScript, (current, total) => {
+                setImageProgress({ current, total });
+            });
+            setSceneImages(images);
+        } catch (imageError) {
+            console.error('Error generating scene images:', imageError);
+        } finally {
+            setIsGeneratingImages(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100">
             <div className="flex">
@@ -307,7 +355,7 @@ Make it compelling, specific, and ready to hand to a video editor. Include exact
                         Back
                     </Button>
 
-                    <h1 className="text-2xl font-bold text-purple-400 mb-8">AdInsight AI</h1>
+                    <h1 className="text-2xl font-bold text-purple-400 mb-8">AdInsight AI (Claude Sonnet 4.5)</h1>
 
                     <nav className="space-y-2">
                         <button
@@ -584,8 +632,8 @@ Make it compelling, specific, and ready to hand to a video editor. Include exact
                                                 <button
                                                     onClick={() => setScriptLanguage('English')}
                                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${scriptLanguage === 'English'
-                                                            ? 'bg-purple-600 text-white'
-                                                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                                        ? 'bg-purple-600 text-white'
+                                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                                         }`}
                                                 >
                                                     English
@@ -593,8 +641,8 @@ Make it compelling, specific, and ready to hand to a video editor. Include exact
                                                 <button
                                                     onClick={() => setScriptLanguage('Hindi')}
                                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${scriptLanguage === 'Hindi'
-                                                            ? 'bg-purple-600 text-white'
-                                                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                                        ? 'bg-purple-600 text-white'
+                                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                                         }`}
                                                 >
                                                     हिंदी (Hindi)
@@ -641,6 +689,78 @@ Make it compelling, specific, and ready to hand to a video editor. Include exact
                                                                 <pre className="text-slate-100 whitespace-pre-wrap font-mono text-sm leading-loose">
                                                                     {fullScript}
                                                                 </pre>
+                                                            </div>
+
+                                                            {/* Scene Images Section */}
+                                                            <div className="mt-8">
+                                                                <div className="flex items-center gap-2 mb-4">
+                                                                    <ImageIcon className="h-5 w-5 text-cyan-400" />
+                                                                    <p className="text-lg font-semibold text-cyan-300">Scene Visualizations</p>
+                                                                </div>
+
+                                                                {isGeneratingImages ? (
+                                                                    <div className="bg-slate-900 rounded-lg p-8 border border-slate-700">
+                                                                        <div className="flex flex-col items-center justify-center space-y-4">
+                                                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
+                                                                            <p className="text-slate-300">Generating scene images...</p>
+                                                                            {imageProgress.total > 0 && (
+                                                                                <p className="text-sm text-slate-400">
+                                                                                    Scene {imageProgress.current} of {imageProgress.total}
+                                                                                </p>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                ) : sceneImages.length > 0 ? (
+                                                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                                        {sceneImages.map((sceneImage, imgIdx) => (
+                                                                            <div key={imgIdx} className="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 hover:border-cyan-500 transition-colors group">
+                                                                                <div className="relative">
+                                                                                    <img
+                                                                                        src={sceneImage.imageUrl}
+                                                                                        alt={sceneImage.sceneName}
+                                                                                        className="w-full h-48 object-cover"
+                                                                                    />
+                                                                                    <button
+                                                                                        onClick={() => downloadSceneImage(sceneImage)}
+                                                                                        className="absolute top-2 right-2 bg-cyan-600 hover:bg-cyan-700 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                                                                        title="Download Image"
+                                                                                    >
+                                                                                        <Download className="h-4 w-4" />
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="p-4">
+                                                                                    <p className="text-sm font-semibold text-cyan-300 mb-1">
+                                                                                        {sceneImage.sceneName}
+                                                                                    </p>
+                                                                                    <div className="mb-2 p-2 bg-slate-800 rounded border border-slate-700">
+                                                                                        <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Visual Prompt:</p>
+                                                                                        <p className="text-xs text-emerald-300 font-mono leading-relaxed line-clamp-3" title={sceneImage.prompt}>
+                                                                                            {sceneImage.prompt.split('"')[1] || sceneImage.prompt}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <p className="text-xs text-slate-400">
+                                                                                        Scene {sceneImage.sceneIndex + 1}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="text-center p-8 bg-slate-900 rounded-lg border border-slate-700 hover:border-cyan-800 transition-colors">
+                                                                        <Button
+                                                                            onClick={handleGenerateImages}
+                                                                            className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-6 rounded-xl flex flex-col items-center gap-2 mx-auto"
+                                                                        >
+                                                                            <span className="flex items-center gap-2 text-lg">
+                                                                                <ImageIcon className="h-5 w-5" />
+                                                                                Generate Scene Visualizations
+                                                                            </span>
+                                                                            <span className="text-xs font-normal opacity-80">
+                                                                                Visualize every scene with AI-generated images
+                                                                            </span>
+                                                                        </Button>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     ) : (

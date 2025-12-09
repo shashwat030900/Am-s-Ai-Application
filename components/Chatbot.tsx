@@ -20,9 +20,14 @@ Here are the applications you can help with:
 
 4. **Content Research Automation**: Conducts AI-powered research on any topic using real-time web data. Provides a summary and 5-7 structured content ideas with concepts and actionable steps for digital marketing campaigns. All research is backed by verified sources.
 
-5. **N8n Test App**: Integration testing tool for n8n workflows.
+5. **Profile Page**: Where users can view and manage their account information.
 
-6. **Profile Page**: Where users can view and manage their account information.
+6. **AdInsight AI (Claude Sonnet 4.5)**: A powerful tool for analyzing social media ad performance and generating new ad scripts.
+   - **Input**: Users paste their ad performance report (text format).
+   - **Analysis**: The app extracts winning/losing ads, identifies top themes and keywords, and provides deep insights into audience and formats.
+   - **Generation**: Users can generate new ad scripts based on winning themes using the "AI Generator" tab.
+   - **Script Expansion**: Generated scripts can be expanded into full production-ready scripts (Hook, Body, CTA, Visuals) using Claude Sonnet 4.5, following the AIDCA principles (Attention, Interest, Desire, Conviction, Action).
+   - **Language Support**: Supports script generation in both English and Hindi.
 
 The dashboard also has a History feature that saves recent work from various apps for easy reference.
 

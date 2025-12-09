@@ -7,7 +7,7 @@ import { ProfileSetupPage } from './pages/ProfileSetupPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { BlogSmithApp } from './pages/BlogSmithApp';
 import { ContentResearchApp } from './pages/ContentResearchApp';
-import { N8nTestApp } from './pages/N8nTestApp';
+
 import { AdInsightApp } from './pages/AdInsightApp';
 
 import { Footer } from './components/Footer';
@@ -16,7 +16,7 @@ import { Sidebar } from './components/Sidebar';
 import { HistoryPanel } from './components/HistoryPanel';
 import { isAuthenticated, logout, hasProfile } from './services/authService';
 
-export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'n8nTest' | 'adInsight';
+export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'adInsight';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -66,8 +66,7 @@ const App: React.FC = () => {
         return <BlogSmithApp onNavigateBack={() => navigateTo('dashboard')} />;
       case 'contentResearch':
         return <ContentResearchApp onNavigateBack={() => navigateTo('dashboard')} />;
-      case 'n8nTest':
-        return <N8nTestApp onNavigateBack={() => navigateTo('dashboard')} />;
+
       case 'adInsight':
         return <AdInsightApp onNavigateBack={() => navigateTo('dashboard')} />;
 
@@ -79,7 +78,7 @@ const App: React.FC = () => {
           onNavigateToProfile={() => navigateTo('profile')}
           onNavigateToBlogSmith={() => navigateTo('blogSmith')}
           onNavigateToContentResearch={() => navigateTo('contentResearch')}
-          onNavigateToN8nTest={() => navigateTo('n8nTest')}
+
           onNavigateToAdInsight={() => navigateTo('adInsight')}
           onLogout={handleLogout}
         />;

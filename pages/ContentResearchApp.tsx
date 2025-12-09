@@ -135,12 +135,18 @@ export const ContentResearchApp: React.FC<ContentResearchAppProps> = ({ onNaviga
                                                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-600 text-white flex items-center justify-center text-sm font-bold">
                                                     {index + 1}
                                                 </span>
-                                                <div className="flex-1">
-                                                    <h3 className="text-lg font-semibold text-cyan-300 mb-2">
-                                                        {idea.title}
-                                                    </h3>
-                                                    <div className="text-gray-300 prose prose-invert prose-sm max-w-none">
-                                                        <ReactMarkdown>{idea.description}</ReactMarkdown>
+                                                <div className="flex-1 space-y-3">
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-1">Concept</h4>
+                                                        <div className="text-gray-200 prose prose-invert prose-sm max-w-none">
+                                                            <ReactMarkdown>{idea.concept}</ReactMarkdown>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-green-400 uppercase tracking-wider mb-1">Actionable Step</h4>
+                                                        <div className="text-gray-300 prose prose-invert prose-sm max-w-none">
+                                                            <ReactMarkdown>{idea.actionable}</ReactMarkdown>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

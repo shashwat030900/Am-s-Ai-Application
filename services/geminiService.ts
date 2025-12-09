@@ -202,3 +202,4 @@ export const generateContent = async (prompt: string): Promise<string> => {
 
     throw new Error("Failed after multiple retries. Please try again later.");
 };
+

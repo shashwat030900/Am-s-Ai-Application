@@ -49,6 +49,8 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onClose }) =
                 return 'bg-green-600';
             case 'SEO Blog Writer':
                 return 'bg-purple-600';
+            case 'AdInsight AI':
+                return 'bg-pink-600';
             default:
                 return 'bg-gray-600';
         }
@@ -62,6 +64,8 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onClose }) =
                 return entry.input.draftPrompt;
             case 'SEO Blog Writer':
                 return `Topic: ${entry.input.topic}\nWebsite: ${entry.input.websiteUrl}\nWord Count: ${entry.input.wordCount}`;
+            case 'AdInsight AI':
+                return `Topic: ${entry.input.topic}\nTitle: ${entry.input.title}\nFormat: ${entry.input.format}`;
             default:
                 return JSON.stringify(entry.input);
         }

@@ -50,3 +50,45 @@ cp .env.template .env.local
 Then fill in your actual values. You can use either naming convention locally:
 - `VITE_GEMINI_API_KEY` (recommended)
 - `API_KEY` or `GEMINI_API_KEY` (legacy, still works)
+
+## Hostinger / Shared Hosting Deployment
+
+Since this is a client-side React application (Single Page Application - SPA), you can host it on any shared hosting like Hostinger.
+
+### 1. Build the Application
+Run the build command on your local machine:
+```bash
+npm run build
+```
+This will create a `dist` folder in your project directory containing the production-ready files.
+
+### 2. Upload Files
+1.  Log in to your Hostinger Control Panel (hPanel).
+2.  Go to **File Manager**.
+3.  Navigate to `public_html`.
+4.  **Upload the CONTENTS of the `dist` folder** (index.html, assets folder, etc.) directly into `public_html`.
+    *   *Do NOT upload the `dist` folder itself, just the files inside it.*
+
+### 3. Setup Client-Side Routing (.htaccess)
+To make navigation work (so refreshing a page like `/dashboard` doesn't give a 404 error), you must create an `.htaccess` file.
+
+1.  In **File Manager** (inside `public_html`), create a new file named `.htaccess`.
+2.  Paste the following configuration:
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+3.  Save the file.
+
+### 4. Environment Variables
+On shared hosting, you cannot set environment variables in a dashboard like Vercel. You must embed them during the build process.
+Make sure your `.env.local` file has the correct `VITE_` prefixed variables **BEFORE** you run `npm run build`. The build process will replace the variables with their actual values in the generated JavaScript files.
+

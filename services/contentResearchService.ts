@@ -18,8 +18,8 @@ export interface ResearchSource {
 }
 
 export interface ContentIdea {
-    title: string;
-    description: string;
+    concept: string;
+    actionable: string;
 }
 
 export interface ResearchResult {
@@ -37,13 +37,15 @@ Provide your response in this EXACT format:
 [Write 2-3 paragraphs summarizing the most important and current information about this topic]
 
 ## Content Ideas
-[List exactly 7 actionable content ideas. For each idea, write it as a numbered item with a bold title followed by a description]
+Provide 5-7 content ideas. Format each idea exactly as follows:
 
-1. **[Compelling Title]**: [2-3 sentences describing the specific content idea and how to implement it. Include concrete details like platforms, formats, timing, etc.]
+### Idea 1
+**Concept:** [Description of the content concept]
+**Actionable:** [Specific actionable step to implement this]
 
-2. **[Compelling Title]**: [2-3 sentences with specific implementation details]
-
-3. **[Compelling Title]**: [2-3 sentences with specific implementation details]
+### Idea 2
+**Concept:** [Description]
+**Actionable:** [Actionable Step]
 
 Continue through idea 7.
 
@@ -79,33 +81,33 @@ IMPORTANT: Make each idea specific and actionable with real examples. Don't be v
         const summaryMatch = text.match(/##\s*Summary\s*([\s\S]*?)(?=##|$)/i);
         const summary = summaryMatch ? summaryMatch[1].trim() : text;
 
-        // Extract content ideas - simple numbered list with bold titles
+        // Extract content ideas - structured format
         const contentIdeas: ContentIdea[] = [];
         const ideasMatch = text.match(/##\s*Content Ideas\s*([\s\S]*?)(?=##|$)/i);
 
         if (ideasMatch) {
             const ideasText = ideasMatch[1];
-            // Match numbered items: 1. **Title**: Description
-            const items = ideasText.match(/\d+\.\s*\*\*([^*]+)\*\*:\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+            // Match blocks starting with ### Idea X
+            const ideaBlocks = ideasText.split(/###\s*Idea\s*\d+/i).slice(1);
 
-            if (items) {
-                items.forEach(item => {
-                    const match = item.match(/\d+\.\s*\*\*([^*]+)\*\*:\s*([\s\S]+)/);
-                    if (match) {
-                        contentIdeas.push({
-                            title: match[1].trim(),
-                            description: match[2].trim()
-                        });
-                    }
-                });
-            }
+            ideaBlocks.forEach(block => {
+                const conceptMatch = block.match(/\*\*Concept:\*\*\s*([\s\S]*?)(?=\*\*Actionable:|$)/i);
+                const actionableMatch = block.match(/\*\*Actionable:\*\*\s*([\s\S]*?)(?=$)/i);
+
+                if (conceptMatch && actionableMatch) {
+                    contentIdeas.push({
+                        concept: conceptMatch[1].trim(),
+                        actionable: actionableMatch[1].trim()
+                    });
+                }
+            });
         }
 
         return {
             summary,
             contentIdeas: contentIdeas.length > 0 ? contentIdeas : [{
-                title: 'No ideas extracted',
-                description: 'Please review the summary for insights.'
+                concept: 'No ideas extracted',
+                actionable: 'Please review the summary for insights.'
             }],
             sources
         };

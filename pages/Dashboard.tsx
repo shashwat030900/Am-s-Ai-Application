@@ -9,10 +9,11 @@ interface DashboardProps {
   onNavigateToContentResearch: () => void;
 
   onNavigateToAdInsight: () => void;
+  onNavigateToSentiment: () => void;
   onLogout: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onNavigateToSentiment, onLogout }) => {
   return (
     <>
       <div className="bg-gray-800 p-6 shadow-md">
@@ -97,6 +98,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
             <button
               onClick={onNavigateToAdInsight}
               className="w-full bg-purple-600 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 transition-all"
+            >
+              Launch App
+            </button>
+          </div>
+
+          {/* Sentiment Analyzer Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-rose-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <h2 className="text-xl font-bold text-rose-400 mb-2">Details Client Analysis</h2>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Detect hidden frustration and churn risk. Analyzes client emails for sentiment, tone, and urgent issues requiring intervention.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToSentiment}
+              className="w-full bg-rose-600 text-white font-bold py-2 px-4 rounded-md hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500 focus:ring-opacity-50 transition-all"
             >
               Launch App
             </button>

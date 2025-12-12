@@ -188,22 +188,22 @@ export const AdInsightApp: React.FC<AdInsightAppProps> = ({ onNavigateBack }) =>
 
         const scripts = [
             {
-                title: `${generatorInput} for Families`,
-                format: 'IG Reel (15s)',
-                hook: `"Why every parent should know about ${generatorInput}"`,
-                script: `Hook: Show a parent looking stressed. Text: "Parenting is hard..." \n\nBody: Quick cuts showing ${generatorInput} helping the family. Focus on ${topKeywords[0] || 'family harmony'}.\n\nCTA: "Learn how in our workshop →"`
+                title: `"Restoring Harmony" (Family Angle)`,
+                format: 'IG Reel (30s)',
+                hook: `"I thought my family was falling apart..." (Emotional Visual)`,
+                script: `Hook: Close up of a stressed parent/person sitting alone in a messy room. Visual: Shadows, cool tones.\n\nBody: Show the gentle transition to peace using ${generatorInput}. Use keyword "${topKeywords[0] || 'healing'}" as the turning point. Show a warm interaction with a loved one.\n\nCTA: "Bring peace back home. Start today →"`
             },
             {
-                title: `Science Behind ${generatorInput}`,
-                format: 'IG Reel (20s)',
-                hook: `"Is ${generatorInput} science or superstition?"`,
-                script: `Hook: Asking the skeptical question.\n\nBody: Show scientific research/studies. Use keywords: ${topKeywords.slice(0, 2).join(', ')}.\n\nCTA: "See the proof yourself →"`
+                title: `"From Doubt to Belief" (Skeptic Angle)`,
+                format: 'Story/Reel (45s)',
+                hook: `"I called it 'woo-woo' nonsense. I was wrong."`,
+                script: `Hook: Person rolling their eyes or looking skeptical at a screen. Text overlay: "My honest confession."\n\nBody: The journey of trying ${generatorInput} as a last resort. Show the specific moment of realization/relief. Mention "${topKeywords[1] || 'logic'}" vs experience.\n\nCTA: "See the evidence yourself →"`
             },
             {
-                title: `${generatorInput} from Anywhere`,
-                format: 'Story/Reel (10s)',
-                hook: `"You don't even need to be there..."`,
-                script: `Hook: Show someone relaxing at home.\n\nBody: Emphasize distance/convenience aspect of ${generatorInput}. Use ${topKeywords[2] || 'healing'} angle.\n\nCTA: "Try it from home →"`
+                title: `"Finding Inner Quiet" (Self-Transformation)`,
+                format: 'Cinematic Video (60s)',
+                hook: `"When was the last time you heard... nothing?"`,
+                script: `Hook: Chaotic city sounds, traffic, notifications pinging. Sudden cut to silence/nature visual.\n\nBody: A visual ASMR-style journey of ${generatorInput}. Focus on "${topKeywords[2] || 'peace'}" and the feeling of weight lifting off shoulders. Pure sensory relief.\n\nCTA: "Find your quiet place. Link in bio."`
             }
         ];
 
@@ -226,79 +226,86 @@ export const AdInsightApp: React.FC<AdInsightAppProps> = ({ onNavigateBack }) =>
             ? 'Write the ENTIRE script in HINDI language (Devanagari script). All voiceovers, on-screen text, and dialogues must be in Hindi. You can use Hinglish for brand names if needed.'
             : 'Write the script in English.';
 
-        const prompt = `You are a professional social media ad scriptwriter. Create a COMPLETE, DETAILED video ad script for the following concept:
+        const prompt = `You are an expert Emotional Direct Response Copywriter and Scriptwriter.
+Your goal is not just to sell, but to move the audience to tears, relief, or a state of deep desire.
 
+Create a COMPLETE, PITCH-PERFECT video ad script for:
 Title: ${script.title}
 Format: ${script.format}
 Hook: ${script.hook}
 
-Context:
-- Winning Themes from data: ${topThemes}
-- Top Keywords: ${topKeywords}
-- This is for ${generatorInput}
+CONTEXT & DATA:
+- Winning Themes: ${topThemes} (Weave these deeply into the narrative)
+- Verified Keywords: ${topKeywords} (Use these naturally in dialogue)
+- Topic: ${generatorInput}
 
 LANGUAGE REQUIREMENT: ${languageInstruction}
 
-STRUCTURE: Follow the AIDCA Principles (Attention, Interest, Desire, Conviction, Action) strictly.
+⚠️ EMOTIONAL GUIDELINES (CRITICAL):
+1. **Show, Don't Just Tell**: Do not say "He felt sad." Say "He stared blankly at the cold coffee, unable to lift the mug."
+2. **Micro-Expressions**: Describe small facial movements—a twitch of the eye, a loosening of the jaw, a deep exhale of relief.
+3. **Sensory Details**: Use sight, sound, and touch. The hum of the AC, the cold light of a screen, the warmth of a hand.
+4. **The "Gut Punch"**: The hook must hit a raw nerve immediately.
 
-Create a PRODUCTION-READY script with clear sections. Use this EXACT format (NO markdown symbols like ** or *** or ---, just clean text):
+STRUCTURE (AIDCA):
+- Attention (Visceral Hook)
+- Interest (Deep Empathy/Agitation)
+- Desire (The Transformation)
+- Conviction (Belief/Social Proof)
+- Action (Urgent but Safe Step)
+
+OUTPUT FORMAT (Strictly clean text, no markdown formatting like ** or ##):
 
 ═══════════════════════════════════════
 TITLE: ${script.title}
-FORMAT: ${script.format}  
-DURATION: 15-25 seconds
+FORMAT: ${script.format}
+Est. DURATION: 30-60 Seconds
+EMOTIONAL ANGLE: ${topThemes.split(',')[0]}
 ═══════════════════════════════════════
 
-📍 SECTION 1: ATTENTION (HOOK) (0-3 SECONDS)
-(Goal: Hook the audience immediately with a catchy headline or shocking statistic)
+📍 SECTION 1: ATTENTION (THE EMOTIONAL HOOK) (0-5 SECONDS)
+(Goal: Stop the scroll by speaking to their hidden pain or secret desire)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Opening Line: [Write exact dialogue]
-Visual: [Describe the shot]
-On-Screen Text: [What text appears]
+Visual Scene: [Describe the setting, lighting, and specific human action]
+On-Screen Text: [Short, punchy text]
+Audio/SFX: [Specific soundscape]
+Spoken Line: "[The exact hook dialogue]"
 
-📍 SECTION 2: INTEREST (PROBLEM AGITATION) (3-8 SECONDS)
-(Goal: Keep them reading by explaining the problem or situation relevant to them)
+📍 SECTION 2: INTEREST (DEEP EMPATHY) (5-15 SECONDS)
+(Goal: "They understand me." Validate their struggle without judgment.)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Voiceover: [Exact script]
-Visual: [Describe what viewer sees]
-On-Screen Text: [Key text overlay]
+Visual Scene: [Action showing the struggle or the 'before' state]
+Voiceover: "[Script building empathy]"
+On-Screen Text: [Validation text]
 
-📍 SECTION 3: DESIRE (SOLUTION) (8-15 SECONDS)
-(Goal: Show them the benefits of your solution to create a "want")
+📍 SECTION 3: DESIRE (THE TRANSFORMATION) (15-35 SECONDS)
+(Goal: The 'Aha' moment. The shift from dark to light. The solution.)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Voiceover: [Exact script]
-Visual: [Show the solution in action]
-On-Screen Text: [Main benefit text]
+Visual Scene: [The shift. Lighting change. Expression change. The product/service in use]
+Voiceover: "[The solution narrative]"
+On-Screen Text: [Benefit-driven text]
 
-📍 SECTION 4: CONVICTION (SOCIAL PROOF) (15-20 SECONDS)
-(Goal: Prove your claims with testimonials or data to remove doubt)
+📍 SECTION 4: CONVICTION (SOCIAL PROOF/LOGIC) (35-45 SECONDS)
+(Goal: removing the fear of being wrong.)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Voiceover: [Build credibility]
-Visual: [Show testimonials/results]
-On-Screen Text: [Stats or quotes]
+Visual Scene: [Results, testimonials, or confident action]
+Voiceover: "[Credibility statement]"
+On-Screen Text: [Stat or Quote]
 
-📍 SECTION 5: ACTION (CALL-TO-ACTION) (20-25 SECONDS)
-(Goal: Tell them exactly what to do next)
+📍 SECTION 5: ACTION (THE INVITATION) (45-60 SECONDS)
+(Goal: A safe, welcoming hand extended to them.)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Voiceover: [Clear next step]
-Visual: [CTA button/link visual]
-On-Screen Text: [Action text]
+Visual Scene: [Direct eye contact or clear path to action]
+Voiceover: "[Specific CTA]"
+On-Screen Text: [Button/Link Text]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎵 MUSIC: [Mood and style recommendation]
-🎨 COLOR PALETTE: [Suggested colors]
-💡 PRO TIP: [One production insight]
+🎵 AUDIO DIRECTION: [Specific mood, tempo, and instrumentation]
+🎨 VISUAL STYLE: [Color grading, camera movement style]
+💡 DIRECTOR'S NOTE: [Key emotional cue for the actor]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Make it compelling, specific, and ready to hand to a video editor. Include exact words to say and specific shots to capture. Optimize for ${script.format.includes('Reel') ? 'Instagram Reels' : 'video ads'}.
-294: 
-295: CRITICAL VISUAL INSTRUCTION:
-296: For the 'Visual' fields, do NOT use generic descriptions like "Person drinking water".
-297: INSTEAD, use HIGHLY SPECIFIC, RELATABLE, and CULTURALLY RELEVANT details that connect with the viewer's daily habits.
-298: Example: Instead of "Show someone drinking", write "Close-up of a hand pouring water into a traditional copper glass, condensation forming on the metal."
-299: Example: Instead of "Person looking at phone", write "Tired mother checking her phone in a dim kitchen at 11 PM, a half-eaten snack on the counter."
-300: 
-301: MAKE IT VISCERAL, EMOTIONAL, AND REAL. The viewer should feel like they are looking at a real life scene.`;
+Make it real. Make it human. Make it unforgettable.`;
 
         try {
             const result = await generateContent(prompt);

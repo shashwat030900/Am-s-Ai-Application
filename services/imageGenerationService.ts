@@ -60,7 +60,7 @@ export const generateSceneImage = async (
 
     // Use Gemini 2.0 Flash (Experimental) for improved image generation
     const modelNames = [
-        'gemini-2.0-flash-exp'
+        'gemini-2.0-flash'
     ];
 
     console.log(`[ImageGen] Starting generation for scene: ${scenePrompt.sceneName}`);

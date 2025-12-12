@@ -87,7 +87,7 @@ export const generateAvatarProfile = async (input: AvatarInput): Promise<string>
     try {
         const localAi = getAiClient();
         const response = await localAi.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash',
             contents: prompt,
         });
         return response.text;
@@ -102,39 +102,32 @@ export const generateAvatarProfile = async (input: AvatarInput): Promise<string>
 
 export const generateMasterPrompt = async (draftPrompt: string): Promise<string> => {
     const systemInstruction = `
-Your mission: diagnose weaknesses in a draft prompt, then deliver a clearly improved version that stays true to the author's original intent and audience.
+You are an expert prompt engineer specializing in creating professional, detailed prompts for AI image generation and content creation.
 
-Phase 1 - Rapid Diagnosis
-Summarise the draft prompt's goal and structure in one short paragraph. Then assess each of the following criteria using: Pass, Caution, or Fail. Add a one-line note explaining each rating.
-Criteria:
-1. Task fidelity
-2. Clarity and Specificity
-3. Context Utilisation
-4. Accuracy and Verifiability
-5. Error Handling
-6. Resource Efficiency (tokens / latency)
+**Your Task:**
+Transform the user's draft prompt into a comprehensive, professional Master Prompt that will produce exceptional results.
 
-High-Priority Triggers (mark any that apply):
-• Context Preservation
-• Intent Refinement
-• Error Prevention
+**Guidelines for Image Generation Prompts:**
+If the draft is for image generation, include:
+1. **Subject Details**: Age, ethnicity, gender, expression, pose, action
+2. **Visual Style**: Photography style (portrait, candid, editorial), art style, or medium
+3. **Lighting**: Type (natural, studio, golden hour), direction, mood
+4. **Composition**: Camera angle, framing, depth of field
+5. **Environment**: Setting, background, atmosphere
+6. **Technical Specs**: Resolution, quality descriptors (8k, photorealistic, sharp focus)
+7. **Mood & Atmosphere**: Emotional tone, color palette, energy
 
-Phase 2 - Precision Rewrite
-1. Apply improvements only where Caution or Fail was noted.
-2. Preserve purpose, scope, and persona.
-3. Use or introduce a numbered-step structure.
-4. Optimise for brevity and clarity.
-5. If any trigger was marked, explicitly show how you addressed it (e.g. added context, clarified intent, inserted fallback logic).
+**Guidelines for Text/Content Prompts:**
+If the draft is for text generation, include:
+1. **Clear Objective**: What the output should accomplish
+2. **Format & Structure**: How the content should be organized
+3. **Tone & Style**: Voice, formality level, personality
+4. **Key Requirements**: Must-have elements, constraints
+5. **Context**: Background information needed
 
-Deliverables
-• Before/After micro-example (2 lines or less) showing a key improvement. If not applicable, give a one-sentence rationale.
-• The revised prompt, enclosed in triple backticks for easy copy/paste.
-
-Validation Checklist:
-• Purpose and audience intact
-• Tone and style consistent
-• Clarity, logic, and structure improved
-• Trigger issues resolved
+**Output Format:**
+Provide ONLY the final, polished Master Prompt. Do not include explanations, analysis, or meta-commentary.
+The prompt should be ready to use immediately in an AI system.
 `;
 
     const prompt = `
@@ -147,7 +140,7 @@ ${draftPrompt}
     try {
         const localAi = getAiClient();
         const response = await localAi.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash',
             contents: prompt,
         });
         return response.text;
@@ -170,7 +163,7 @@ export const generateContent = async (prompt: string): Promise<string> => {
             const localAi = getAiClient();
 
             // Try primary model first, fallback to different model on last attempt
-            const modelName = attempt < maxRetries - 1 ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+            const modelName = attempt < maxRetries - 1 ? 'gemini-2.0-flash' : 'gemini-2.0-flash';
 
             const response = await localAi.models.generateContent({
                 model: modelName,

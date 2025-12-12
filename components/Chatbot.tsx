@@ -43,12 +43,13 @@ export const Chatbot: React.FC = () => {
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const chat = useMemo<Chat | null>(() => {
-        if (!process.env.API_KEY) {
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!apiKey) {
             console.error("API_KEY is not set for Chatbot");
             return null;
         }
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const ai = new GoogleGenAI({ apiKey });
             return ai.chats.create({
                 model: 'gemini-2.5-flash',
                 config: {

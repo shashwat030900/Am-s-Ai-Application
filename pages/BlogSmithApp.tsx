@@ -486,7 +486,7 @@ export const BlogSmithApp: React.FC<BlogSmithAppProps> = ({ onNavigateBack }) =>
                                     referrerPolicy="no-referrer"
                                 />
                             )}
-                            {isEditing && headerImageUrl && (
+                            {headerImageUrl && (
                                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 rounded-t-lg transition-opacity opacity-0 group-hover:opacity-100 z-10">
                                     <Button onClick={handleRegenerateHeaderImage} disabled={regeneratingHeader} variant="secondary">
                                         {regeneratingHeader ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}

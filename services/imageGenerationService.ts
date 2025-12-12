@@ -58,16 +58,16 @@ export const generateSceneImage = async (
     
     Style: Award-winning documentary photography. 8k resolution. Hyper-realistic. Cinematic lighting. Authentic real-life texture. Depth of field. No text overlay on the image itself. 16:9 aspect ratio. Looks like a real photo taken by a professional photographer.`;
 
-    // Use Gemini 2.0 Flash (Experimental) for improved image generation
+    // Use 'nano banana' (Imagen 3) as requested
     const modelNames = [
-        'gemini-2.0-flash'
+        'gemini-2.5-flash-image'
     ];
 
     console.log(`[ImageGen] Starting generation for scene: ${scenePrompt.sceneName}`);
 
     for (const modelName of modelNames) {
         try {
-            console.log(`[ImageGen] Attempting with model: ${modelName}`);
+            console.log(`[ImageGen] Attempting with model (Nano Banana): ${modelName}`);
             const localAi = getAiClient();
 
             // Explicitly request image generation
@@ -104,8 +104,11 @@ export const generateSceneImage = async (
         }
     }
 
-    // Fallback to canvas if all models fail
-    console.log("[ImageGen] All models failed. Falling back to placeholder.");
+    // Fallback to placeholder if Nano Banana fails
+    console.log("[ImageGen] Nano Banana (Imagen 3) failed. Falling back to placeholder.");
+
+    // We strictly removed Pollinations AI as requested.
+
     try {
         const placeholderImage = createPlaceholderImage(scenePrompt);
         return {
@@ -115,11 +118,13 @@ export const generateSceneImage = async (
             prompt: imagePrompt
         };
     } catch (error) {
-        console.error('Error generating canvas image:', error);
+        console.error('Error generating fallback image:', error);
+        // Last resort fallback
+        const placeholderImage = createPlaceholderImage(scenePrompt);
         return {
             sceneIndex: scenePrompt.sceneIndex,
             sceneName: scenePrompt.sceneName,
-            imageUrl: createErrorPlaceholder(scenePrompt.sceneName),
+            imageUrl: placeholderImage,
             prompt: imagePrompt
         };
     }
@@ -231,36 +236,37 @@ const createErrorPlaceholder = (sceneName: string): string => {
 export const extractScenesFromScript = (fullScript: string): SceneImagePrompt[] => {
     const scenes: SceneImagePrompt[] = [];
 
-    // Match each section (ATTENTION, INTEREST, DESIRE, CONVICTION, ACTION)
-    const sectionRegex = /📍\s*SECTION\s+\d+:\s*([^(]+)\(([^)]+)\)[^━]*━+([^📍]*)/g;
+    // Split the script into potential sections
+    const rawSections = fullScript.split(/📍\s*SECTION\s+\d+:/i);
 
-    let match;
-    let index = 0;
+    // Skip the first chunk (intro text)
+    rawSections.slice(1).forEach((sectionText, idx) => {
+        // Extract scene name (first line usually)
+        const nameMatch = sectionText.match(/^([^\n]+)/);
+        const rawName = nameMatch ? nameMatch[1].trim() : `Scene ${idx + 1}`;
 
-    while ((match = sectionRegex.exec(fullScript)) !== null) {
-        const sceneName = match[1].trim();
-        const timing = match[2].trim();
-        const content = match[3].trim();
+        // Clean up name (remove timing info if present)
+        const cleanName = rawName.split('(')[0].trim();
 
-        // Extract visual description
-        const visualMatch = content.match(/Visual:\s*([^\n]+)/i);
+        // Extract visual description - support both "Visual Scene:" and "Visual:"
+        const visualMatch = sectionText.match(/Visual(?: Scene)?:\s*([^\n]+)/i);
         const visualDescription = visualMatch ? visualMatch[1].trim() : '';
 
         // Extract on-screen text
-        const textMatch = content.match(/On-Screen Text:\s*([^\n]+)/i);
+        const textMatch = sectionText.match(/On-Screen Text:\s*([^\n]+)/i);
         const onScreenText = textMatch ? textMatch[1].trim() : '';
 
         if (visualDescription) {
             scenes.push({
-                sceneIndex: index,
-                sceneName: `${sceneName} (${timing})`,
+                sceneIndex: idx,
+                sceneName: cleanName,
                 visualDescription,
                 onScreenText
             });
-            index++;
         }
-    }
+    });
 
+    console.log(`[ImageGen] Extracted ${scenes.length} scenes from script.`);
     return scenes;
 };
 

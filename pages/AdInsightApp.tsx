@@ -3,7 +3,7 @@ import { PieChart, Pie, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Toolti
 import { ArrowLeft, FileText, TrendingUp, Sparkles, Upload, Target, Lightbulb, Wand2, Image as ImageIcon, Download } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { generateContent } from '../services/claudeService';
+import { generateContent } from '../services/poeService';
 import { saveHistory } from '../services/historyService';
 import { generateAllSceneImages, GeneratedSceneImage, downloadSceneImage } from '../services/imageGenerationService';
 

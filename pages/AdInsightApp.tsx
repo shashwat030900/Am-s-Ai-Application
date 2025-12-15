@@ -32,6 +32,14 @@ export const AdInsightApp: React.FC<AdInsightAppProps> = ({ onNavigateBack }) =>
     const [activeView, setActiveView] = useState<'input' | 'dashboard' | 'generator'>('input');
     const [rawText, setRawText] = useState('');
     const [parsedData, setParsedData] = useState<ParsedData | null>(null);
+
+    // Debug: Check if API key is loaded
+    React.useEffect(() => {
+        const apiKey = import.meta.env.VITE_CLAUDE_API_KEY || process.env.CLAUDE_API_KEY;
+        console.log("DEBUG: VITE_CLAUDE_API_KEY present?", !!import.meta.env.VITE_CLAUDE_API_KEY);
+        console.log("DEBUG: process.env.CLAUDE_API_KEY present?", !!process.env.CLAUDE_API_KEY);
+        console.log("DEBUG: Resolved API Key length:", apiKey ? apiKey.length : 0);
+    }, []);
     const [generatorInput, setGeneratorInput] = useState('');
     const [generatedScripts, setGeneratedScripts] = useState<any[]>([]);
     const [expandedScript, setExpandedScript] = useState<number | null>(null);

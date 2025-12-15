@@ -1,13 +1,21 @@
 import { saveHistory } from './historyService';
 
 // Poe API configuration
+// NOTE: This URL is likely a placeholder or requires a specific reverse-proxy. 
+// Standard Poe API usage is via the Poe platform's official bot creation tools usually.
 const POE_API_URL = "https://api.poe.com/v1/chat/completions";
 const MODEL_NAME = "claude-sonnet-4.5"; // As per Poe documentation/screenshot
 
 const getApiKey = () => {
-    const apiKey = import.meta.env.VITE_CLAUDE_API_KEY || process.env.CLAUDE_API_KEY;
+    // Check various environment variable possibilities
+    const apiKey = import.meta.env.VITE_CLAUDE_API_KEY ||
+        process.env.CLAUDE_API_KEY ||
+        import.meta.env.VITE_POE_API_KEY ||
+        process.env.POE_API_KEY;
+
     if (!apiKey) {
-        throw new Error("API Key is missing. Please ensure VITE_CLAUDE_API_KEY is set in .env.local");
+        console.error("Missing API Key. Checked VITE_CLAUDE_API_KEY and VITE_POE_API_KEY.");
+        throw new Error("Poe/Claude API Key is missing. Please add VITE_CLAUDE_API_KEY to your .env.local file. Note: Poe App credits do NOT automatically enable API access.");
     }
     return apiKey;
 };
@@ -17,9 +25,13 @@ export const generateContent = async (prompt: string): Promise<string> => {
     const maxRetries = 3;
     const baseDelay = 1000; // 1 second
 
+    console.log("Generating content with Poe Service...");
+
     for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
             const apiKey = getApiKey();
+
+            console.log(`Sending request to ${POE_API_URL} (Attempt ${attempt + 1})`);
 
             const response = await fetch(POE_API_URL, {
                 method: 'POST',
@@ -41,6 +53,7 @@ export const generateContent = async (prompt: string): Promise<string> => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+                console.error("Poe API Error Response:", errorData);
                 throw new Error(`Poe API returned ${response.status}: ${errorData.error?.message || response.statusText}`);
             }
 

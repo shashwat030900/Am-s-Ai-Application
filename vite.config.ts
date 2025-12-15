@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
       // Support both VITE_GEMINI_API_KEY (production) and API_KEY/GEMINI_API_KEY (legacy)
       'process.env.API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY || env.API_KEY || env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY || env.GEMINI_API_KEY),
+      'process.env.CLAUDE_API_KEY': JSON.stringify(env.VITE_CLAUDE_API_KEY || env.CLAUDE_API_KEY),
       'import.meta.env.VITE_EMAILJS_SERVICE_ID': JSON.stringify(env.VITE_EMAILJS_SERVICE_ID),
       'import.meta.env.VITE_EMAILJS_TEMPLATE_ID': JSON.stringify(env.VITE_EMAILJS_TEMPLATE_ID),
       'import.meta.env.VITE_EMAILJS_PUBLIC_KEY': JSON.stringify(env.VITE_EMAILJS_PUBLIC_KEY),

@@ -140,12 +140,62 @@ export const generateBlogPost = async (input: BlogInput): Promise<BlogPostOutput
 };
 
 export const generateImage = async (topic: string, hint?: string): Promise<ImageOutput | null> => {
-    // Use Pollinations AI for free, reliable AI image generation
-    const prompt = hint ? `${topic} ${hint}` : topic;
-    // Add a random seed to prevent caching of identical prompts
-    const seed = Math.floor(Math.random() * 10000);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&seed=${seed}&nologo=true`;
-    return { imageUrl };
+    try {
+        const client = getAiClient();
+        const prompt = hint
+            ? `Create a professional, high-quality image for a blog post about "${topic}". Focus on: ${hint}. Style: photorealistic, 16:9 aspect ratio, vibrant colors, professional composition.`
+            : `Create a professional, high-quality image for a blog post about "${topic}". Style: photorealistic, 16:9 aspect ratio, vibrant colors, professional composition.`;
+
+        console.log('[BlogSmith] Generating image with Gemini for:', prompt.substring(0, 100));
+
+        // Try Gemini image generation model
+        const response = await client.models.generateContent({
+            model: 'gemini-2.0-flash-exp-image-generation',
+            contents: prompt,
+        });
+
+        console.log('[BlogSmith] Image generation response received');
+        console.log('[BlogSmith] Response structure:', JSON.stringify(response, null, 2).substring(0, 500));
+
+        // Check for image data in response
+        if (response.candidates && response.candidates[0]?.content?.parts) {
+            console.log('[BlogSmith] Found candidates with parts:', response.candidates[0].content.parts.length);
+
+            for (const part of response.candidates[0].content.parts) {
+                console.log('[BlogSmith] Part type:', typeof part, 'Keys:', Object.keys(part));
+
+                if (part.inlineData && part.inlineData.mimeType.startsWith('image/')) {
+                    const imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    console.log('[BlogSmith] Image generated successfully');
+                    return { imageUrl };
+                }
+
+                // Also check for text responses that might contain image URLs
+                if (part.text) {
+                    console.log('[BlogSmith] Found text in response:', part.text.substring(0, 100));
+                }
+            }
+        } else {
+            console.log('[BlogSmith] No candidates or parts found in response');
+        }
+
+        console.warn('[BlogSmith] No image found in Gemini response, falling back to Pollinations AI');
+
+        // Fallback to Pollinations AI if Gemini doesn't return an image
+        const fallbackPrompt = hint ? `${topic} ${hint}` : topic;
+        const seed = Math.floor(Math.random() * 10000);
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}?width=1280&height=720&seed=${seed}&nologo=true`;
+        return { imageUrl };
+    } catch (error) {
+        console.error('[BlogSmith] Error generating image with Gemini:', error);
+
+        // Fallback to Pollinations AI on error
+        console.log('[BlogSmith] Falling back to Pollinations AI');
+        const fallbackPrompt = hint ? `${topic} ${hint}` : topic;
+        const seed = Math.floor(Math.random() * 10000);
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}?width=1280&height=720&seed=${seed}&nologo=true`;
+        return { imageUrl };
+    }
 };
 
 export const regenerateParagraph = async (topic: string, paragraph: string): Promise<{ newParagraph: string }> => {

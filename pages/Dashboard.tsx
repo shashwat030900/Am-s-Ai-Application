@@ -10,10 +10,11 @@ interface DashboardProps {
 
   onNavigateToAdInsight: () => void;
   onNavigateToSentiment: () => void;
+  onNavigateToLearning: () => void;
   onLogout: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onNavigateToSentiment, onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onNavigateToSentiment, onNavigateToLearning, onLogout }) => {
   return (
     <>
       <div className="bg-gray-800 p-6 shadow-md">
@@ -114,6 +115,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
             <button
               onClick={onNavigateToSentiment}
               className="w-full bg-rose-600 text-white font-bold py-2 px-4 rounded-md hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500 focus:ring-opacity-50 transition-all"
+            >
+              Launch App
+            </button>
+          </div>
+
+          {/* AI for Learning & Upskilling Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <h2 className="text-xl font-bold text-blue-400 mb-2">AI for Learning & Upskilling</h2>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Daily upskilling for Account Managers. Get one high-impact, actionable learning resource every day tailored to your schedule.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToLearning}
+              className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
             >
               Launch App
             </button>

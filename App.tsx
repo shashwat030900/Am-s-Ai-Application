@@ -7,6 +7,7 @@ import { ProfileSetupPage } from './pages/ProfileSetupPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { BlogSmithApp } from './pages/BlogSmithApp';
 import { ContentResearchApp } from './pages/ContentResearchApp';
+import { LearningApp } from './pages/LearningApp';
 
 import { AdInsightApp } from './pages/AdInsightApp';
 import { SentimentAnalyzerApp } from './pages/SentimentAnalyzerApp';
@@ -17,7 +18,7 @@ import { Sidebar } from './components/Sidebar';
 import { HistoryPanel } from './components/HistoryPanel';
 import { isAuthenticated, logout, hasProfile } from './services/authService';
 
-export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'adInsight' | 'sentimentAnalyzer';
+export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'adInsight' | 'sentimentAnalyzer' | 'learningApp';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -72,6 +73,8 @@ const App: React.FC = () => {
         return <AdInsightApp onNavigateBack={() => navigateTo('dashboard')} />;
       case 'sentimentAnalyzer':
         return <SentimentAnalyzerApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'learningApp':
+        return <LearningApp onNavigateBack={() => navigateTo('dashboard')} />;
 
       case 'dashboard':
       default:
@@ -84,6 +87,7 @@ const App: React.FC = () => {
 
           onNavigateToAdInsight={() => navigateTo('adInsight')}
           onNavigateToSentiment={() => navigateTo('sentimentAnalyzer')}
+          onNavigateToLearning={() => navigateTo('learningApp')}
           onLogout={handleLogout}
         />;
     }

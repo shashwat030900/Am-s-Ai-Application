@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
 
 // Lazily initialize the AI client
 let ai: GoogleGenAI | null = null;
@@ -143,15 +143,23 @@ export const generateImage = async (topic: string, hint?: string): Promise<Image
     try {
         const client = getAiClient();
         const prompt = hint
-            ? `Create a professional, high-quality image for a blog post about "${topic}". Focus on: ${hint}. Style: photorealistic, 16:9 aspect ratio, vibrant colors, professional composition.`
-            : `Create a professional, high-quality image for a blog post about "${topic}". Style: photorealistic, 16:9 aspect ratio, vibrant colors, professional composition.`;
+            ? `Create a documentary-style, educational image about "${topic}". Context: ${hint}. Style: photorealistic, cinematic lighting, neutral tone.`
+            : `Create a documentary-style, educational image about "${topic}". Style: photorealistic, cinematic lighting, neutral tone.`;
 
         console.log('[BlogSmith] Generating image with Gemini for:', prompt.substring(0, 100));
 
         // Try Gemini image generation model
         const response = await client.models.generateContent({
-            model: 'gemini-2.0-flash-exp-image-generation',
+            model: 'models/gemini-2.5-flash-image',
             contents: prompt,
+            config: {
+                safetySettings: [
+                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                ]
+            }
         });
 
         console.log('[BlogSmith] Image generation response received');

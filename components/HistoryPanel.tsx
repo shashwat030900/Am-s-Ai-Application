@@ -80,7 +80,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onClose }) =
         <>
             {/* Side Panel */}
             <div
-                className={`fixed right-0 top-0 h-full bg-gray-800 shadow-2xl z-50 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed right-0 top-0 h-full bg-gray-800 shadow-2xl z-50 transition-transform duration-300 ease-in-out print:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     } w-full md:w-96 overflow-hidden flex flex-col`}
             >
                 {/* Header */}
@@ -228,7 +228,7 @@ export const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onClose }) =
             {isOpen && (
                 <div
                     onClick={onClose}
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40 print:hidden"
                 />
             )}
         </>

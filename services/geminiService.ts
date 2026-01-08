@@ -154,7 +154,7 @@ ${draftPrompt}
 };
 
 // Generic content generation function with retry logic
-export const generateContent = async (prompt: string): Promise<string> => {
+export const generateContent = async (prompt: string, model: string = 'gemini-2.0-flash'): Promise<string> => {
     const maxRetries = 3;
     const baseDelay = 1000; // 1 second
 
@@ -162,8 +162,8 @@ export const generateContent = async (prompt: string): Promise<string> => {
         try {
             const localAi = getAiClient();
 
-            // Try primary model first, fallback to different model on last attempt
-            const modelName = attempt < maxRetries - 1 ? 'gemini-2.0-flash' : 'gemini-2.0-flash';
+            // Use the provided model, or fallback/retry logic if needed (currently just retries same model)
+            const modelName = model;
 
             const response = await localAi.models.generateContent({
                 model: modelName,

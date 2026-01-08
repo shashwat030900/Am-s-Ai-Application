@@ -10,7 +10,12 @@ import { ContentResearchApp } from './pages/ContentResearchApp';
 import { LearningApp } from './pages/LearningApp';
 
 import { AdInsightApp } from './pages/AdInsightApp';
+import { CompetitorAnalysisApp } from './pages/CompetitorAnalysisApp';
 import { SentimentAnalyzerApp } from './pages/SentimentAnalyzerApp';
+import { MarketingAgentApp } from './pages/MarketingAgentApp';
+import { WebsiteAuditApp } from './pages/WebsiteAuditApp';
+import { AdsAnalyzerApp } from './pages/AdsAnalyzerApp';
+import { SocialMediaAuditApp } from './pages/SocialMediaAuditApp';
 
 import { Footer } from './components/Footer';
 import { Chatbot } from './components/Chatbot';
@@ -18,7 +23,7 @@ import { Sidebar } from './components/Sidebar';
 import { HistoryPanel } from './components/HistoryPanel';
 import { isAuthenticated, logout, hasProfile } from './services/authService';
 
-export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'adInsight' | 'sentimentAnalyzer' | 'learningApp';
+export type Page = 'dashboard' | 'customerAvatar' | 'masterPrompt' | 'profile' | 'blogSmith' | 'contentResearch' | 'adInsight' | 'competitorAnalysis' | 'sentimentAnalyzer' | 'learningApp' | 'marketingAgent' | 'websiteAudit' | 'socialMediaAudit' | 'adsAnalyzer';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -71,10 +76,25 @@ const App: React.FC = () => {
 
       case 'adInsight':
         return <AdInsightApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'competitorAnalysis':
+        return <CompetitorAnalysisApp
+          onNavigateBack={() => navigateTo('dashboard')}
+          onNavigateToProfile={() => navigateTo('profile')}
+          onLogout={handleLogout}
+        />;
+
       case 'sentimentAnalyzer':
         return <SentimentAnalyzerApp onNavigateBack={() => navigateTo('dashboard')} />;
       case 'learningApp':
         return <LearningApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'marketingAgent':
+        return <MarketingAgentApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'websiteAudit':
+        return <WebsiteAuditApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'adsAnalyzer':
+        return <AdsAnalyzerApp onNavigateBack={() => navigateTo('dashboard')} />;
+      case 'socialMediaAudit':
+        return <SocialMediaAuditApp onNavigateBack={() => navigateTo('dashboard')} />;
 
       case 'dashboard':
       default:
@@ -86,8 +106,13 @@ const App: React.FC = () => {
           onNavigateToContentResearch={() => navigateTo('contentResearch')}
 
           onNavigateToAdInsight={() => navigateTo('adInsight')}
+          onNavigateToCompetitorAnalysis={() => navigateTo('competitorAnalysis')}
           onNavigateToSentiment={() => navigateTo('sentimentAnalyzer')}
           onNavigateToLearning={() => navigateTo('learningApp')}
+          onNavigateToMarketingAgent={() => navigateTo('marketingAgent')}
+          onNavigateToWebsiteAudit={() => navigateTo('websiteAudit')}
+          onNavigateToSocialMediaAudit={() => navigateTo('socialMediaAudit')}
+          onNavigateToAdsAnalyzer={() => navigateTo('adsAnalyzer')}
           onLogout={handleLogout}
         />;
     }

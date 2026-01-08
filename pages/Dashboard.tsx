@@ -1,5 +1,6 @@
 import React from 'react';
 import { Header } from '../components/Header';
+import { Search, Zap, Activity } from 'lucide-react';
 
 interface DashboardProps {
   onNavigateToAvatar: () => void;
@@ -9,12 +10,17 @@ interface DashboardProps {
   onNavigateToContentResearch: () => void;
 
   onNavigateToAdInsight: () => void;
+  onNavigateToCompetitorAnalysis: () => void;
   onNavigateToSentiment: () => void;
   onNavigateToLearning: () => void;
+  onNavigateToMarketingAgent: () => void;
+  onNavigateToWebsiteAudit: () => void;
+  onNavigateToSocialMediaAudit: () => void;
+  onNavigateToAdsAnalyzer: () => void;
   onLogout: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onNavigateToSentiment, onNavigateToLearning, onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavigateToMasterPrompt, onNavigateToProfile, onNavigateToBlogSmith, onNavigateToContentResearch, onNavigateToAdInsight, onNavigateToCompetitorAnalysis, onNavigateToSentiment, onNavigateToLearning, onNavigateToMarketingAgent, onNavigateToWebsiteAudit, onNavigateToSocialMediaAudit, onNavigateToAdsAnalyzer, onLogout }) => {
   return (
     <>
       <div className="bg-gray-800 p-6 shadow-md">
@@ -104,6 +110,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
             </button>
           </div>
 
+
+          {/* Competitor Analysis Card */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl p-6 flex flex-col justify-between border border-gray-700 group hover:border-cyan-500/50 transition-all duration-500 transform hover:-translate-y-2">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-black text-white group-hover:text-cyan-400 transition-colors">Competitor Analysis</h2>
+                <div className="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-all">
+                  <Search className="text-cyan-400" size={20} />
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-6 h-20 leading-relaxed">
+                Deep-dive into market presence, SEO strategies, and product gaps. Generate actionable AM playbooks to beat the competition.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToCompetitorAnalysis}
+              className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black py-3 px-4 rounded-xl hover:from-cyan-500 hover:to-blue-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/30 transition-all shadow-lg active:scale-95"
+            >
+              LAUNCH ANALYSIS
+            </button>
+          </div>
+
           {/* Sentiment Analyzer Card */}
           <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-rose-500 transition-all duration-300 transform hover:-translate-y-1">
             <div>
@@ -136,8 +164,91 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToAvatar, onNavi
             </button>
           </div>
 
+          {/* Marketing Agent Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col justify-between hover:ring-2 hover:ring-indigo-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <h2 className="text-xl font-bold text-indigo-400 mb-2">FutureFlow Marketing Agent</h2>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                End-to-end strategist. Analyzes your domain, creates a buyer persona, audits ads/website, and generates a 3-month action plan.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToMarketingAgent}
+              className="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-all"
+            >
+              Launch App
+            </button>
+          </div>
+
+          {/* Website Audit Card */}
+          <div className="bg-gradient-to-br from-gray-800 to-indigo-900/40 rounded-xl shadow-lg p-6 flex flex-col justify-between border border-indigo-500/30 hover:border-indigo-400 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-indigo-400">Website Audit Report Maker</h2>
+                <div className="p-2 bg-indigo-500/10 rounded-lg">
+                  <Activity className="text-indigo-400" size={20} />
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Generate detailed AI audit reports covering Technical, SEO, UX/UI, and 11 other critical parameters for any website.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToWebsiteAudit}
+              className="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-500 transition-all shadow-lg active:scale-95 flex items-center justify-center space-x-2"
+            >
+              <Zap size={18} fill="currentColor" />
+              <span>LAUNCH AUDIT</span>
+            </button>
+          </div>
+
+          {/* Social Media Audit Card - NEW */}
+          <div className="bg-gradient-to-br from-gray-800 to-blue-900/40 rounded-xl shadow-lg p-6 flex flex-col justify-between border border-blue-500/30 hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-blue-400">Ads Analyzer</h2>
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Activity className="text-blue-400" size={20} />
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Generate detailed AI audit reports covering Technical, SEO, Creative, and Competitive parameters for Meta and Google Ads.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToAdsAnalyzer}
+              className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-500 transition-all shadow-lg active:scale-95 flex items-center justify-center space-x-2"
+            >
+              <Zap size={18} fill="currentColor" />
+              <span>LAUNCH ANALYZER</span>
+            </button>
+          </div>
+
+          {/* Social Media Profile Audit Card - NEW */}
+          <div className="bg-gradient-to-br from-gray-800 to-pink-900/40 rounded-xl shadow-lg p-6 flex flex-col justify-between border border-pink-500/30 hover:border-pink-400 transition-all duration-300 transform hover:-translate-y-1">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-pink-400">Social Media Profile Audit</h2>
+                <div className="p-2 bg-pink-500/10 rounded-lg">
+                  <Activity className="text-pink-400" size={20} />
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm mb-6 h-20">
+                Multi-platform strategic audit (Instagram, YouTube, etc.). Analyzes positioning, content quality, swot, and growth potential.
+              </p>
+            </div>
+            <button
+              onClick={onNavigateToSocialMediaAudit}
+              className="w-full bg-pink-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-pink-500 transition-all shadow-lg active:scale-95 flex items-center justify-center space-x-2"
+            >
+              <Zap size={18} fill="currentColor" />
+              <span>LAUNCH AUDIT</span>
+            </button>
+          </div>
+
         </div>
       </main>
     </>
   );
 };
+

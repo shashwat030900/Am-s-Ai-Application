@@ -15,7 +15,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigateToProfile, onLogout,
         <>
             {/* Sidebar */}
             <div
-                className={`fixed left-0 top-0 h-full bg-gray-800 shadow-2xl z-50 transition-all duration-300 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'
+                className={`fixed left-0 top-0 h-full bg-gray-800 shadow-2xl z-50 transition-all duration-300 flex flex-col print:hidden ${isCollapsed ? 'w-20' : 'w-64'
                     }`}
             >
                 {/* Logo Section */}
@@ -168,7 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigateToProfile, onLogout,
             </div>
 
             {/* Spacer to prevent content from going under sidebar */}
-            <div className={`${isCollapsed ? 'w-20' : 'w-64'} flex-shrink-0 transition-all duration-300`} />
+            <div className={`${isCollapsed ? 'w-20' : 'w-64'} flex-shrink-0 transition-all duration-300 print:hidden`} />
         </>
     );
 };

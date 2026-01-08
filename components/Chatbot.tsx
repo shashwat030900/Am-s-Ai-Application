@@ -92,7 +92,7 @@ export const Chatbot: React.FC = () => {
 
     return (
         <>
-            <div className="fixed bottom-6 right-6 z-40">
+            <div className="fixed bottom-6 right-6 z-40 print:hidden">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className="bg-cyan-600 text-white rounded-full p-4 shadow-lg hover:bg-cyan-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-cyan-500 focus:ring-opacity-50"
@@ -103,7 +103,7 @@ export const Chatbot: React.FC = () => {
             </div>
 
             {isOpen && (
-                <div className="fixed bottom-24 right-6 w-full max-w-sm h-[60vh] bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col border border-gray-700">
+                <div className="fixed bottom-24 right-6 w-full max-w-sm h-[60vh] bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col border border-gray-700 print:hidden">
                     <header className="bg-gray-700 p-4 rounded-t-lg flex justify-between items-center flex-shrink-0">
                         <h3 className="font-bold text-lg text-cyan-400">AI Assistant</h3>
                         <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">&times;</button>
